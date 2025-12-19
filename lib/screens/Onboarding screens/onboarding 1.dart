@@ -45,6 +45,7 @@ class _Onboarding1State extends State<Onboarding1> {
                   ),
                 ),
               ),
+              //then to the texts following the logo.
               Transform.translate(
                 offset: const Offset(0, 60), // Move text down by 60 pixels
                 child: Text(
@@ -57,15 +58,16 @@ class _Onboarding1State extends State<Onboarding1> {
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.center,
-                child: Transform.translate(
-                  offset: const Offset(0, 60), // Move text down by 60 pixels
+
+              Transform.translate(
+                offset: const Offset(0, 85),
+                child: Opacity(
+                  opacity: 0.6,
                   child: Text(
                     textAlign: TextAlign.center,
                     "All your wedding moments,\n updates, and memories beautifully\n organized in one place.",
                     style: GoogleFonts.cormorantGaramond(
-                      fontSize: 25,
+                      fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF5AA0D6),
                     ),
@@ -74,6 +76,39 @@ class _Onboarding1State extends State<Onboarding1> {
               ),
             ],
           ),
+          ElevatedButton(
+            onPressed: () {},
+            style:
+                ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white, // White button
+                  foregroundColor: const Color(0xFF5AA0D6),
+                  elevation: 0, // We'll use custom shadow instead
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 80,
+                    vertical: 18,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40), // Pill shape
+                  ),
+                  shadowColor: Colors.transparent,
+                ).copyWith(
+                  // Custom shadow like the image
+                  shadowColor: WidgetStateProperty.all(
+                    const Color(0xFF5AA0D6).withOpacity(0.45),
+                  ),
+                  elevation: WidgetStateProperty.all(12),
+                ),
+            child: Text(
+              "Continue",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.instrumentSerif(
+                fontSize: 22,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF5AA0D6),
+              ),
+            ),
+          ),
+
           Align(
             alignment: Alignment.bottomRight,
             child: Image.asset("assets/images/Flower 1.png"),
