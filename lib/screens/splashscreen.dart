@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:wedconnect/screens/Onboarding%20screens/onboarding%201.dart';
+import 'package:wedconnect/screens/Onboarding%20screens/OnboardingPage.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({Key? key}) : super(key: key);
@@ -19,7 +19,7 @@ class _Splashscreen extends State<Splashscreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Onboarding1()),
+          MaterialPageRoute(builder: (context) => OnboardingPage()),
         );
       }
     });
