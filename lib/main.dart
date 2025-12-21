@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wedconnect/screens/splashscreen.dart'; // Import your screens
+import 'package:wedconnect/screens/Onboarding%20screens/OnboardingPage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
           // Add more as needed
         ),
       ),
-      home: const Splashscreen(),
+      home: OnboardingPage(),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wedconnect/Reusable%20components/Button.dart';
 
 class Onboarding1 extends StatefulWidget {
   const Onboarding1({super.key});
@@ -76,39 +77,10 @@ class _Onboarding1State extends State<Onboarding1> {
               ),
             ],
           ),
-          ElevatedButton(
-            onPressed: () {},
-            style:
-                ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white, // White button
-                  foregroundColor: const Color(0xFF5AA0D6),
-                  elevation: 0, // We'll use custom shadow instead
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 80,
-                    vertical: 18,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40), // Pill shape
-                  ),
-                  shadowColor: Colors.transparent,
-                ).copyWith(
-                  // Custom shadow like the image
-                  shadowColor: WidgetStateProperty.all(
-                    const Color(0xFF5AA0D6).withOpacity(0.45),
-                  ),
-                  elevation: WidgetStateProperty.all(12),
-                ),
-            child: Text(
-              "Continue",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.instrumentSerif(
-                fontSize: 22,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF5AA0D6),
-              ),
-            ),
+          Transform.translate(
+            offset: const Offset(0, 100),
+            child: CustomElevatedButton(text: "Continue", onPressed: () {}),
           ),
-
           Align(
             alignment: Alignment.bottomRight,
             child: Image.asset("assets/images/Flower 1.png"),
