@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "69195515876",
+    "project_id": "wedconnect-auth",
+    "storage_bucket": "wedconnect-auth.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69195515876:android:38ccf0c38f069d171329f1",
+        "android_client_info": {
+          "package_name": "com.wedconnect.wedconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCo3QE6RoUHwFW9hNVQ8jW5ktx95WD3Tbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

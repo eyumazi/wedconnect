@@ -1,9 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wedconnect/screens/splashscreen.dart';
+import 'package:wedconnect/Authentication/Wrapper.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); //used for flutter auth.
 
   // Preload ALL fonts you'll use in the app
   await GoogleFonts.pendingFonts([
@@ -14,6 +17,7 @@ Future<void> main() async {
     // Add any other Google Fonts you plan to use
   ]);
 
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -22,7 +26,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'WedConnect',
       theme: ThemeData(
@@ -49,7 +53,7 @@ class MyApp extends StatelessWidget {
           // Add more as needed
         ),
       ),
-      home: Splashscreen(),
+      home: Wrapper(),
     );
   }
 }
