@@ -12,7 +12,20 @@
           "package_name": "com.wedconnect.wedconnect"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "69195515876-3dp4mknc8gifubeego87615rq64jkf36.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wedconnect.wedconnect",
+            "certificate_hash": "52a54851d3a02ed3698fa408ae9ab2d93c163c9e"
+          }
+        },
+        {
+          "client_id": "69195515876-8cup0tniuqnmcs6emsr7dsf2hogr0dbj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCo3QE6RoUHwFW9hNVQ8jW5ktx95WD3Tbo"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69195515876-8cup0tniuqnmcs6emsr7dsf2hogr0dbj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

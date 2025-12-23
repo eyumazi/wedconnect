@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart' show GoogleSignIn;
 
 class HomepageTest extends StatefulWidget {
   const HomepageTest({super.key});
@@ -11,6 +12,8 @@ class HomepageTest extends StatefulWidget {
 final user = FirebaseAuth.instance.currentUser;
 
 signout() async {
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  await googleSignIn.signOut();
   await FirebaseAuth.instance.signOut();
 }
 

@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:wedconnect/Authentication/EmailVerification.dart';
 import 'package:wedconnect/Authentication/Homepage%20text.dart';
-import 'package:wedconnect/Authentication/login.dart';
+import 'package:wedconnect/screens/splashscreen.dart';
 
 // import your screens
 // import 'home_screen.dart';
@@ -33,12 +34,12 @@ class Wrapper extends StatelessWidget {
             if (snapshot.data!.emailVerified) {
               return HomepageTest();
             } else {
-              return 
+              return EmailVerification();
             }
           }
 
           // User not logged in
-          return Login();
+          return Splashscreen();
         },
       ),
     );
