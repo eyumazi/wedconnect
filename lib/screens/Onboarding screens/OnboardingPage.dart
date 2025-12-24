@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:wedconnect/Authentication/login.dart';
 import 'package:wedconnect/Reusable%20components/Button.dart';
 import 'package:wedconnect/screens/Onboarding%20screens/onBoardingCard.dart';
 import 'package:wedconnect/screens/Onboarding%20screens/onBoardingCard2.dart';
@@ -31,9 +33,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
     ),
     Onboardingcard(
       image: "assets/onboarding/qr.png",
-      title: "Smart QR Wedding Invitation",
+      title: "Smart QR Wedding \nInvitation",
       description:
-          "Send and receive elegant digital invites with secure QR access for guests.",
+          "Send and receive elegant digital \ninvites with secure QR access for \nguests.",
       Button: CustomElevatedButton(
         text: "Next",
         onPressed: () {
@@ -47,9 +49,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
     ),
     Onboardingcard(
       image: "assets/onboarding/qr.png",
-      title: "Smart QR Wedding Invitation",
+      title: "Smart QR Wedding\nInvitation",
       description:
-          "Send and receive elegant digital invites with secure QR access for guests.",
+          "Send and receive elegant digital \ninvites with secure QR access for \nguests.",
       Button: CustomElevatedButton(
         text: "Next",
         onPressed: () {
@@ -63,9 +65,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
     ),
     Onboardingcard(
       image: "assets/onboarding/Photo Gallery.png",
-      title: "Capture & Share Memories Together",
+      title: "Capture & Share \nMemories Together",
       description:
-          "Guests can upload photos instantly and relive the celebration as it unfolds.",
+          "Guests can upload photos instantly \nand relive the celebration as it\nunfolds.",
       Button: CustomElevatedButton(
         text: "Next",
         onPressed: () {
@@ -79,9 +81,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
     ),
     Onboardingcard(
       image: "assets/onboarding/Heart.png",
-      title: "A Guestbook Filled With Love",
+      title: "A Guestbook Filled With \nLove",
       description:
-          "Collect heartfelt messages and blessings from your guests—stored forever.",
+          "Collect heartfelt messages and \nblessings from your guests—stored \nforever.",
       Button: CustomElevatedButton(
         text: "Next",
         onPressed: () {
@@ -106,6 +108,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             duration: Duration(milliseconds: 400),
             curve: Curves.linear,
           );
+          Get.offAll(Login());
         },
       ),
     ),

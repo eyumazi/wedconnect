@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wedconnect/Reusable%20components/Button.dart';
+import 'package:wedconnect/screens/Onboarding%20screens/OnboardingPage.dart';
 
 class Onboarding1 extends StatefulWidget {
   const Onboarding1({super.key});
@@ -79,7 +80,39 @@ class _Onboarding1State extends State<Onboarding1> {
           ),
           Transform.translate(
             offset: const Offset(0, 100),
-            child: CustomElevatedButton(text: "Continue", onPressed: () {}),
+            child: CustomElevatedButton(
+              text: "Continue",
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 1500),
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const OnboardingPage(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          final fadeAnimation = CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeOutCubic,
+                          );
+
+                          final slideAnimation = Tween<Offset>(
+                            begin: const Offset(0, 0.08),
+                            end: Offset.zero,
+                          ).animate(fadeAnimation);
+
+                          return FadeTransition(
+                            opacity: fadeAnimation,
+                            child: SlideTransition(
+                              position: slideAnimation,
+                              child: child,
+                            ),
+                          );
+                        },
+                  ),
+                );
+              },
+            ),
           ),
           Align(
             alignment: Alignment.bottomRight,

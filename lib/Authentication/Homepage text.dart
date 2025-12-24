@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart' show GoogleSignIn;
+import 'package:wedconnect/Authentication/Wrapper.dart';
 
 class HomepageTest extends StatefulWidget {
   const HomepageTest({super.key});
@@ -15,6 +17,7 @@ signout() async {
   final GoogleSignIn googleSignIn = GoogleSignIn();
   await googleSignIn.signOut();
   await FirebaseAuth.instance.signOut();
+  Get.offAll(Wrapper());
 }
 
 class _HomepageTestState extends State<HomepageTest> {

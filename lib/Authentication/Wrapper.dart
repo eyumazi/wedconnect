@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wedconnect/Authentication/EmailVerification.dart';
-import 'package:wedconnect/Authentication/Homepage%20text.dart';
 import 'package:wedconnect/screens/splashscreen.dart';
+import 'package:wedconnect/screens/splashscreen2.dart';
 
 // import your screens
 // import 'home_screen.dart';
@@ -32,7 +32,7 @@ class Wrapper extends StatelessWidget {
           // User logged in
           if (snapshot.hasData) {
             if (snapshot.data!.emailVerified) {
-              return HomepageTest();
+              return Splashscreen2();
             } else {
               return EmailVerification();
             }

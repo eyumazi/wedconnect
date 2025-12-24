@@ -34,10 +34,8 @@ class _EmailVerificationState extends State<EmailVerification> {
     setState(() => isLoading = false);
 
     if (user!.emailVerified) {
-      // ✅ Restart app flow from Wrapper
       Get.offAll(() => const Wrapper());
     } else {
-      // ❌ User clicked but didn't verify
       Get.snackbar(
         "Email not verified",
         "Please verify your email before continuing.",
