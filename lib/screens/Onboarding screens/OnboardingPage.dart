@@ -48,22 +48,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
     ),
     Onboardingcard(
-      image: "assets/onboarding/qr.png",
-      title: "Smart QR Wedding\nInvitation",
-      description:
-          "Send and receive elegant digital \ninvites with secure QR access for \nguests.",
-      Button: CustomElevatedButton(
-        text: "Next",
-        onPressed: () {
-          _pageController.animateToPage(
-            3,
-            duration: Duration(milliseconds: 400),
-            curve: Curves.easeInToLinear,
-          );
-        },
-      ),
-    ),
-    Onboardingcard(
       image: "assets/onboarding/Photo Gallery.png",
       title: "Capture & Share \nMemories Together",
       description:
@@ -72,7 +56,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         text: "Next",
         onPressed: () {
           _pageController.animateToPage(
-            4,
+            3,
             duration: Duration(milliseconds: 400),
             curve: Curves.easeInToLinear,
           );
@@ -88,7 +72,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         text: "Next",
         onPressed: () {
           _pageController.animateToPage(
-            5,
+            4,
             duration: Duration(milliseconds: 400),
             curve: Curves.easeInToLinear,
           );
@@ -96,7 +80,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
     ),
     Onboardingcard2(
-      image: "assets/onboarding/App logo.png",
+      image: "assets/images/logo.png",
       title: "Your Wedding, Your Style",
       description:
           "Create your account and customize\n your wedding space to make the\n app truly yours.",
@@ -132,7 +116,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 children: _onBoardingPages,
               ),
             ),
-            SmoothPageIndicator(controller: _pageController, count: 6),
+            SmoothPageIndicator(controller: _pageController, count: 5),
           ],
         ),
       ),

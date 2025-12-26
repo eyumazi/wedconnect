@@ -18,6 +18,10 @@ dependencies:
   firebase_auth: ^6.1.3
   get: ^4.7.3
   google_sign_in: ^6.0.0
+  image_picker: ^1.2.1
+  cloud_firestore: ^6.1.1
+  firebase_storage: ^13.0.5
+  supabase_flutter: ^2.12.0
 
 dev_dependencies:
   flutter_test:
@@ -37,6 +41,7 @@ flutter:
     - assets/onboarding/Photo Gallery.png
     - assets/onboarding/qr.png
     - assets/onboarding/weddingDay.png
+    - assets/images/Google.png
 
   # Since you're using google_fonts package, you DON'T need this fonts section
   # Remove or comment out this section:

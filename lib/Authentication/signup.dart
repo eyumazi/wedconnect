@@ -171,23 +171,22 @@ class _SignupState extends State<Signup> {
                   Column(
                     children: [
                       Container(
-                        width: 70,
-                        height: 70,
+                        width: 120,
+                        height: 120,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0xFFC19AC7).withOpacity(0.3),
-                              blurRadius: 15,
-                              spreadRadius: 2,
+                              color: Color(0xFFC19AC7).withOpacity(0.4),
+                              blurRadius: 18,
+                              spreadRadius: 8,
                             ),
                           ],
                         ),
-                        child: Icon(
-                          Icons.favorite_border,
-                          size: 36,
-                          color: Color(0xFFC19AC7),
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          fit: BoxFit.contain,
                         ),
                       ),
                       SizedBox(height: 16),
@@ -204,8 +203,8 @@ class _SignupState extends State<Signup> {
                       Text(
                         'Begin your wedding journey with us',
                         style: GoogleFonts.cormorantGaramond(
-                          fontSize: 16,
-                          color: Color(0xFFC19AC7).withOpacity(0.7),
+                          fontSize: 18,
+                          color: Color(0xFFC19AC7).withOpacity(1),
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -258,8 +257,8 @@ class _SignupState extends State<Signup> {
                       if (value == null || value.isEmpty) {
                         return 'Please create a password';
                       }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
+                      if (value.length < 8) {
+                        return 'Password must be at least 8 characters';
                       }
                       return null;
                     },
@@ -446,7 +445,7 @@ class _SignupState extends State<Signup> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'assets/google_logo.png', // Add Google logo to your assets
+                            'assets/images/Google.png',
                             height: 24,
                             width: 24,
                           ),
@@ -510,8 +509,8 @@ class _SignupState extends State<Signup> {
                       'It is when an imperfect couple learns to enjoy their differences."',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.cormorantGaramond(
-                        fontSize: 14,
-                        color: Color(0xFFC19AC7).withOpacity(0.7),
+                        fontSize: 16,
+                        color: Color(0xFFC19AC7).withOpacity(1),
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -544,7 +543,7 @@ class _SignupState extends State<Signup> {
           label,
           style: GoogleFonts.cormorantGaramond(
             fontSize: 16,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w700,
             color: Color(0xFFC19AC7),
           ),
         ),

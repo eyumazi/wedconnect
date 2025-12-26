@@ -71,7 +71,7 @@ class Onboardingcard extends StatelessWidget {
                           // Using GetX instead of Navigator
                           Get.off(
                             () => Onboardingcard2(
-                              image: "assets/onboarding/App logo.png",
+                              image: "assets/images/logo.png",
                               title: "Your Wedding, Your Style",
                               description:
                                   "Create your account and customize\n your wedding space to make the\n app truly yours.",

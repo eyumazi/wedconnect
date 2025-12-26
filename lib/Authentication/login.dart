@@ -102,24 +102,20 @@ class _LoginState extends State<Login> {
                   Column(
                     children: [
                       Container(
-                        width: 80,
-                        height: 80,
+                        width: 130,
+                        height: 130,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
                               color: Color(0xFFC19AC7).withOpacity(0.3),
-                              blurRadius: 20,
-                              spreadRadius: 2,
+                              blurRadius: 18,
+                              spreadRadius: 8,
                             ),
                           ],
                         ),
-                        child: Icon(
-                          Icons.favorite,
-                          size: 40,
-                          color: Color(0xFFC19AC7),
-                        ),
+                        child: Image.asset('assets/images/logo.png'),
                       ),
                       SizedBox(height: 16),
                       Text(
@@ -135,8 +131,8 @@ class _LoginState extends State<Login> {
                       Text(
                         'Your Luxury Wedding Experience',
                         style: GoogleFonts.cormorantGaramond(
-                          fontSize: 16,
-                          color: Color(0xFFC19AC7).withOpacity(0.9),
+                          fontSize: 18,
+                          color: Color(0xFFC19AC7).withOpacity(1),
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -166,7 +162,7 @@ class _LoginState extends State<Login> {
                       'Sign in to continue your journey',
                       style: GoogleFonts.cormorantGaramond(
                         fontSize: 16,
-                        color: Color(0xFFC19AC7).withOpacity(0.7),
+                        color: Color(0xFFC19AC7).withOpacity(1),
                       ),
                     ),
                   ),
@@ -235,9 +231,10 @@ class _LoginState extends State<Login> {
                       child: Text(
                         'Forgot Password?',
                         style: GoogleFonts.cormorantGaramond(
-                          fontSize: 14,
+                          fontSize: 16,
                           color: Color(0xFF5AA0D6),
                           fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
@@ -325,13 +322,13 @@ class _LoginState extends State<Login> {
                           'New to WedConnect?',
                           style: GoogleFonts.cormorantGaramond(
                             fontSize: 14,
-                            color: Color(0xFFC19AC7).withOpacity(0.7),
+                            color: Color(0xFFC19AC7).withOpacity(1),
                           ),
                         ),
                       ),
                       Expanded(
                         child: Divider(
-                          color: Color(0xFFC19AC7).withOpacity(0.3),
+                          color: Color(0xFFC19AC7).withOpacity(0.6),
                           thickness: 1,
                         ),
                       ),
@@ -379,9 +376,10 @@ class _LoginState extends State<Login> {
                     'Every love story is beautiful,\nbut yours should be luxurious.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.cormorantGaramond(
-                      fontSize: 14,
-                      color: Color(0xFFC19AC7).withOpacity(0.5),
+                      fontSize: 16,
+                      color: Color(0xFFC19AC7).withOpacity(1),
                       fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
 
@@ -412,7 +410,7 @@ class _LoginState extends State<Login> {
           label,
           style: GoogleFonts.cormorantGaramond(
             fontSize: 16,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w700,
             color: Color(0xFFC19AC7),
           ),
         ),

@@ -86,7 +86,7 @@ class _Onboarding1State extends State<Onboarding1> {
                 Navigator.pushReplacement(
                   context,
                   PageRouteBuilder(
-                    transitionDuration: const Duration(milliseconds: 1500),
+                    transitionDuration: const Duration(milliseconds: 800),
                     pageBuilder: (context, animation, secondaryAnimation) =>
                         const OnboardingPage(),
                     transitionsBuilder:
