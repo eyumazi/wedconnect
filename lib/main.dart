@@ -3,27 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:wedconnect/screens/Form%20Screens/ProfileSetup.dart';
+import 'package:wedconnect/screens/Form%20Screens/weddingInfo.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   await Supabase.initialize(
     url: "https://ddluaenjbcatrjaziqzc.supabase.co",
     anonKey: "sb_publishable_YktGN7tpWvYXXAhGpLXXvw_u7Zz-BhR",
   );
 
-  WidgetsFlutterBinding.ensureInitialized();
-  WidgetsFlutterBinding.ensureInitialized(); //used for flutter auth.
-
-  // Preload ALL fonts you'll use in the app
-  await GoogleFonts.pendingFonts([
-    GoogleFonts.getFont('Inspiration'), // Your custom font
-    GoogleFonts.getFont('Cormorant Garamond'), // Add more fonts
-    GoogleFonts.getFont('Roboto'), // Another font
-    GoogleFonts.getFont('Instrument Serif'), // And more...
-    // Add any other Google Fonts you plan to use
-  ]);
-
   await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 
@@ -37,30 +28,36 @@ class MyApp extends StatelessWidget {
       title: 'WedConnect',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        // Define multiple text styles with different fonts
-        textTheme: TextTheme(
-          displayLarge: GoogleFonts.inspiration(
-            fontSize: 72,
-            fontWeight: FontWeight.w400,
-          ),
-          displayMedium: GoogleFonts.inspiration(
-            fontSize: 56,
-            fontWeight: FontWeight.w400,
-          ),
-          // For body text, use a different font
-          bodyLarge: GoogleFonts.cormorantGaramond(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-          ),
-          bodyMedium: GoogleFonts.instrumentSerif(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-          ),
-          // Add more as needed
-        ),
+        fontFamily: GoogleFonts.inter().fontFamily, // Set as default font
+        textTheme:
+            TextTheme(
+              displayLarge: GoogleFonts.inspiration(
+                fontSize: 72,
+                fontWeight: FontWeight.w600,
+              ),
+              displayMedium: GoogleFonts.inspiration(
+                fontSize: 56,
+                fontWeight: FontWeight.w600,
+              ),
+              bodyLarge: GoogleFonts.allura(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+              bodyMedium: GoogleFonts.instrumentSerif(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              labelLarge: GoogleFonts.cormorantGaramond(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ).apply(
+              fontFamily: GoogleFonts.cormorantGaramond()
+                  .fontFamily, // Apply to all text styles
+            ),
       ),
-      // home: Wrapper(),
-      home: ProfileSetupScreen(),
+      //home: Wrapper(),
+      home: WeddingInfo(),
     );
   }
 }

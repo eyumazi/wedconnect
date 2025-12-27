@@ -417,7 +417,7 @@ packages:
     source: hosted
     version: "2.1.0"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       sha256: "87721a4a50b19c7f1d49001e51409bddc46303966ce89a65af4f4e6004896412"
@@ -773,6 +773,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.1"
+  static_map:
+    dependency: "direct main"
+    description:
+      name: static_map
+      sha256: "9b744a152631c5612843c2e2da7b4d0e69c378a64a91a3f9f4a3b4712d9c24a6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   storage_client:
     dependency: transitive
     description:
