@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wedconnect/Authentication/ForgotPassword.dart';
-import 'package:wedconnect/Authentication/Homepage%20text.dart';
 import 'package:wedconnect/Authentication/signup.dart';
+import 'package:wedconnect/screens/Form%20Screens/ProfileSetup.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -32,7 +32,7 @@ class _LoginState extends State<Login> {
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      Get.offAll(() => HomepageTest());
+      Get.offAll(() => ProfileSetupScreen());
 
       Get.snackbar(
         'Welcome',

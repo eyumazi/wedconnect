@@ -4,10 +4,6 @@ import 'package:wedconnect/Authentication/EmailVerification.dart';
 import 'package:wedconnect/screens/splashscreen.dart';
 import 'package:wedconnect/screens/splashscreen2.dart';
 
-// import your screens
-// import 'home_screen.dart';
-// import 'login_screen.dart';
-
 class Wrapper extends StatelessWidget {
   const Wrapper({super.key});
 

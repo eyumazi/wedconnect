@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:wedconnect/screens/Form%20Screens/weddingInfo.dart';
 
 class ProfileViewScreen extends StatelessWidget {
   const ProfileViewScreen({super.key});
@@ -35,6 +36,15 @@ class ProfileViewScreen extends StatelessWidget {
               Text(
                 profile['role'] == 'groom' ? "The Groom" : "The Bride",
                 style: const TextStyle(fontSize: 20),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const WeddingInfo()),
+                  );
+                },
+                child: const Text("Proceed to Wedding Info"),
               ),
             ],
           );

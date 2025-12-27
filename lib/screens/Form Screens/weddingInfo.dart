@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wedconnect/Reusable components/Button2.dart';
 import 'package:wedconnect/Util.dart';
-import 'package:wedconnect/screens/Form Screens/ProfileViewScreen.dart';
+import 'package:wedconnect/screens/Form%20Screens/WeddingInfoPreview.dart';
 
 class WeddingInfo extends StatefulWidget {
   const WeddingInfo({super.key});
@@ -265,7 +265,9 @@ class _WeddingInfoState extends State<WeddingInfo> {
 
               CustomElevatedButton2(
                 text: "Continue to Theme and cover",
-                onPressed: saveWeddingInfo,
+                onPressed: () {
+                  saveWeddingInfo();
+                },
               ),
             ],
           ),
