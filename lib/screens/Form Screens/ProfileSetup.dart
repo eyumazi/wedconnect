@@ -46,10 +46,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           .uploadBinary(
             path,
             _image!,
-            fileOptions: const FileOptions(
-              //contentType: 'image/png',
-              upsert: true,
-            ),
+            fileOptions: const FileOptions(upsert: true),
           );
 
       final imageUrl = supabase.storage

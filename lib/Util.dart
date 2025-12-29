@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 pickImage(ImageSource source) async {
   final ImagePicker _imgepicker = ImagePicker();
@@ -74,4 +76,15 @@ class OSMLocationService {
     final arabicRegex = RegExp(r'[\u0600-\u06FF]');
     return text.replaceAll(arabicRegex, '').trim();
   }
+}
+
+final supabase = Supabase.instance.client;
+final uid = FirebaseAuth.instance.currentUser!.uid;
+
+Future<List<dynamic>> fetchCoverPhoto() async {
+  return await supabase
+      .from('weddings')
+      .select()
+      .eq('user_id', uid)
+      .order('created_at');
 }

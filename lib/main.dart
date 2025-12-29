@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:wedconnect/screens/Form%20Screens/GuestListForm.dart';
+import 'package:wedconnect/screens/Form%20Screens/CoverPhotoUploadingScreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
             ),
       ),
       //home: Wrapper(),
-      home: Guestlistform(),
+      home: WeddingCoverUpload(),
     );
   }
 }

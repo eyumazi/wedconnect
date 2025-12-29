@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget textInsideWithIcon(String text, IconData icon) {
+Widget TextBoxWithIcon(String text, IconData icon) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
