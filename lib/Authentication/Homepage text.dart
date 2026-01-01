@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart' show GoogleSignIn;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wedconnect/Authentication/Wrapper.dart';
-import 'package:wedconnect/Util.dart' show fetchWeddingData;
+import 'package:wedconnect/Util.dart' show fetchWeddingData, openGoogleMaps;
 
 class HomepageTest extends StatefulWidget {
   const HomepageTest({super.key});
@@ -219,91 +219,19 @@ class _HomepageTestState extends State<HomepageTest> {
                                   ),
                                 ),
                               //Venue section
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 30,
-                                  horizontal: 20,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(
-                                    0xFFF8E6EC,
-                                  ).withOpacity(0.9),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: StreamBuilder(
-                                  stream: Stream.periodic(
-                                    const Duration(seconds: 1),
+                              if (venueName != null &&
+                                  venueAddress != null &&
+                                  venueLat != null &&
+                                  venueLng != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: venueCard(
+                                    venueName: venueName,
+                                    venueAddress: venueAddress,
+                                    lat: venueLat,
+                                    lng: venueLng,
                                   ),
-                                  builder: (context, snapshot) {
-                                    final remaining = getRemainingTime(
-                                      weddingDate,
-                                    );
-
-                                    final days = remaining.inDays;
-                                    final hours = remaining.inHours % 24;
-                                    final mins = remaining.inMinutes % 60;
-                                    final secs = remaining.inSeconds % 60;
-
-                                    return Column(
-                                      children: [
-                                        //WEDDING NAME
-                                        Text(
-                                          weddingName ??
-                                              'Wedding name not provided',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.playfairDisplay(
-                                            fontSize: 38,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        SizedBox(height: 20),
-
-                                        /// TIME ROW
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            _timeBox(days.toString(), 'days'),
-                                            _timeBox(
-                                              hours.toString().padLeft(2, '0'),
-                                              'hours',
-                                            ),
-                                            _timeBox(
-                                              mins.toString().padLeft(2, '0'),
-                                              'mins',
-                                            ),
-                                            _timeBox(
-                                              secs.toString().padLeft(2, '0'),
-                                              'secs',
-                                            ),
-                                          ],
-                                        ),
-
-                                        const SizedBox(height: 15),
-
-                                        Text(
-                                          'Until our wedding',
-                                          style: GoogleFonts.allura(
-                                            fontSize: 28,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-
-                                        const SizedBox(height: 6),
-                                        Text(
-                                          '${weddingDate.day.toString().padLeft(2, '0')}/'
-                                          '${weddingDate.month.toString().padLeft(2, '0')}/'
-                                          '${weddingDate.year}',
-                                          style: GoogleFonts.libreBodoni(
-                                            fontSize: 18,
-                                            color: Colors.grey[700],
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
                                 ),
-                              ),
                             ],
                           ),
                         ),
@@ -312,7 +240,7 @@ class _HomepageTestState extends State<HomepageTest> {
                   ),
                 ),
 
-                /// 🔹 CONTENT SECTION
+                //CONTENT SECTION
                 Container(
                   width: double.infinity,
                   color: Colors.white,
@@ -385,3 +313,106 @@ Widget _timeBox(String value, String label) {
 }
 
 //helper widget that creates the Venue section
+Widget venueCard({
+  required String venueName,
+  required String venueAddress,
+  required double lat,
+  required double lng,
+}) {
+  final mapUrl =
+      'https://maps.googleapis.com/maps/api/staticmap'
+      '?center=$lat,$lng'
+      '&zoom=15'
+      '&size=600x300'
+      '&markers=color:red%7C$lat,$lng'
+      '&key=YOUR_GOOGLE_MAPS_API_KEY';
+
+  return GestureDetector(
+    onTap: () => openGoogleMaps(lat, lng),
+    child: Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8E6EC).withOpacity(0.95),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          /// TITLE
+          Text(
+            "VENUE",
+            style: GoogleFonts.playfairDisplay(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.5,
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          /// VENUE NAME
+          Text(
+            venueName,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.libreBodoni(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          /// ADDRESS
+          Text(
+            venueAddress,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+          ),
+
+          const SizedBox(height: 16),
+
+          /// MAP PREVIEW
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Stack(
+              children: [
+                Image.network(
+                  mapUrl,
+                  height: 180,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+
+                /// Google badge overlay
+                Positioned(
+                  bottom: 8,
+                  right: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      "Open in Maps",
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
