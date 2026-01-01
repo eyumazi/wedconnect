@@ -22,6 +22,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
   final supabase = Supabase.instance.client;
   final uid = FirebaseAuth.instance.currentUser!.uid;
+  bool _isUploading = false;
 
   Future<void> selectImage() async {
     final img = await pickImage(ImageSource.gallery);
@@ -37,6 +38,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ).showSnackBar(const SnackBar(content: Text("Select a profile picture")));
       return;
     }
+
+    setState(() => _isUploading = true);
 
     final path = '$uid/profile.png';
 
@@ -59,6 +62,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         'profile_image': imageUrl,
       });
 
+      if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const ProfileViewScreen()),
@@ -67,6 +72,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    } finally {
+      if (mounted) {
+        setState(() => _isUploading = false);
+      }
     }
   }
 
@@ -96,151 +105,200 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           elevation: 0, // Remove shadow
           centerTitle: true,
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        body: Stack(
           children: [
-            GestureDetector(
-              onTap: selectImage,
-              child: CircleAvatar(
-                radius: 75,
-                backgroundImage: _image != null ? MemoryImage(_image!) : null,
-                backgroundColor: Color(0xFFFE96AF),
-                child: _image == null
-                    ? const Icon(Icons.add_a_photo_rounded, size: 45)
-                    : null,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 30),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(
-                      0.5,
-                    ), // Reduced opacity here directly
-                    borderRadius: BorderRadius.circular(50),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                GestureDetector(
+                  onTap: _isUploading ? null : selectImage,
+                  child: CircleAvatar(
+                    radius: 75,
+                    backgroundImage: _image != null
+                        ? MemoryImage(_image!)
+                        : null,
+                    backgroundColor: Color(0xFFFE96AF),
+                    child: _image == null
+                        ? const Icon(Icons.add_a_photo_rounded, size: 45)
+                        : null,
                   ),
-                  child: Column(
-                    children: [
-                      Text(
-                        "Kindly Specify our title",
-                        style: GoogleFonts.cormorantGaramond(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontStyle: FontStyle.italic,
-                        ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 30),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(
+                          0.5,
+                        ), // Reduced opacity here directly
+                        borderRadius: BorderRadius.circular(50),
                       ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Column(
                         children: [
-                          SizedBox(
-                            //Choice for the groom
-                            width: 170,
-                            height: 150,
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  bottom: 0,
-                                  right: 3,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _role = 'groom';
-                                      });
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 50,
-                                      backgroundColor: _role == 'groom'
-                                          ? Color(0xFFFE96AF)
-                                          : Colors.grey,
-                                      child: Text(
-                                        "The Groom",
-                                        style: GoogleFonts.allura(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          color: _role == 'groom'
-                                              ? Colors.black
-                                              : Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: -15,
-                                  top: 20,
-                                  child: Image.asset(
-                                    "assets/images/groom.png",
-                                    height: 120,
-                                  ),
-                                ),
-                              ],
+                          Text(
+                            "Kindly Specify our title",
+                            style: GoogleFonts.cormorantGaramond(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontStyle: FontStyle.italic,
                             ),
                           ),
-                          //const SizedBox(width: 30),
-                          SizedBox(
-                            //Choice for the groom
-                            width: 180,
-                            height: 150,
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _role = 'bride';
-                                      });
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 50,
-                                      backgroundColor: _role == 'bride'
-                                          ? Color(0xFFFE96AF)
-                                          : Colors.grey,
-                                      child: Text(
-                                        "The Bride",
-                                        style: GoogleFonts.allura(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          color: _role == 'bride'
-                                              ? Colors.black
-                                              : Colors.white,
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                //Choice for the groom
+                                width: 170,
+                                height: 150,
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 3,
+                                      child: GestureDetector(
+                                        onTap: _isUploading
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  _role = 'groom';
+                                                });
+                                              },
+                                        child: CircleAvatar(
+                                          radius: 50,
+                                          backgroundColor: _role == 'groom'
+                                              ? Color(0xFFFE96AF)
+                                              : Colors.grey,
+                                          child: Text(
+                                            "The Groom",
+                                            style: GoogleFonts.allura(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              color: _role == 'groom'
+                                                  ? Colors.black
+                                                  : Colors.white,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                    Positioned(
+                                      left: -15,
+                                      top: 20,
+                                      child: Image.asset(
+                                        "assets/images/groom.png",
+                                        height: 120,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Positioned(
-                                  left: -10,
-                                  top: 20,
-                                  child: Image.asset(
-                                    "assets/images/bride.png",
-                                    height: 120,
-                                  ),
+                              ),
+                              SizedBox(
+                                //Choice for the bride
+                                width: 180,
+                                height: 150,
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: GestureDetector(
+                                        onTap: _isUploading
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  _role = 'bride';
+                                                });
+                                              },
+                                        child: CircleAvatar(
+                                          radius: 50,
+                                          backgroundColor: _role == 'bride'
+                                              ? Color(0xFFFE96AF)
+                                              : Colors.grey,
+                                          child: Text(
+                                            "The Bride",
+                                            style: GoogleFonts.allura(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              color: _role == 'bride'
+                                                  ? Colors.black
+                                                  : Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      left: -10,
+                                      top: 20,
+                                      child: Image.asset(
+                                        "assets/images/bride.png",
+                                        height: 120,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ],
+                      ),
+                    ),
+                  ),
+                ),
+                CustomElevatedButton2(
+                  text: "Continue to Wedding Setup",
+                  onPressed: _isUploading ? null : saveProfile,
+                ),
+              ],
+            ),
+            // Loading overlay
+            if (_isUploading)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color(0xFFFE96AF),
+                                ),
+                                strokeWidth: 4,
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              "Uploading profile...",
+                              style: GoogleFonts.cormorantGaramond(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-            CustomElevatedButton2(
-              text: "Continue to Wedding Setup",
-              onPressed: () {
-                saveProfile();
-              },
-            ),
           ],
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 pickImage(ImageSource source) async {
   final ImagePicker _imgepicker = ImagePicker();
@@ -78,13 +79,22 @@ class OSMLocationService {
   }
 }
 
+//Featching functions for displaying data from the database.
 final supabase = Supabase.instance.client;
 final uid = FirebaseAuth.instance.currentUser!.uid;
 
-Future<List<dynamic>> fetchCoverPhoto() async {
-  return await supabase
-      .from('weddings')
-      .select()
-      .eq('user_id', uid)
-      .order('created_at');
+//A function used for fetching wedding data.
+Future<List<dynamic>> fetchWeddingData() async {
+  return await supabase.from('weddings').select().eq('user_id', uid);
+}
+
+//Helper function to open Google Maps at specific coordinates i've used it on the map displayed on the homescree.
+Future<void> openGoogleMaps(double lat, double lng) async {
+  final uri = Uri.parse(
+    'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
+  );
+
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+    throw 'Could not open Google Maps';
+  }
 }

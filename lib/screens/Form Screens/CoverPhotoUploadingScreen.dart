@@ -48,7 +48,6 @@ class _WeddingCoverUploadState extends State<WeddingCoverUpload> {
             coverImage!,
             fileOptions: const FileOptions(upsert: true),
           );
-
       final imageUrl = supabase.storage
           .from('wedding-covers')
           .getPublicUrl(path);
@@ -94,14 +93,15 @@ class _WeddingCoverUploadState extends State<WeddingCoverUpload> {
       ),
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Text(
                     "Upload your favorite cover photo",
                     style: GoogleFonts.cormorantGaramond(
                       fontSize: 18,
@@ -109,70 +109,71 @@ class _WeddingCoverUploadState extends State<WeddingCoverUpload> {
                       color: Colors.white,
                     ),
                   ),
-                ),
-                _hintText(
-                  "Your cover photo will be used to construct your wedding wizard",
-                ),
+                  const SizedBox(height: 8),
+                  _hintText(
+                    "Your cover photo will be used to construct your wedding wizard",
+                  ),
+                  const SizedBox(height: 20),
 
-                /// Preview
-                GestureDetector(
-                  onTap: pickCoverImage,
-                  child: Container(
-                    height: 350,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: Colors.grey[900],
-                      image: coverImage != null
-                          ? DecorationImage(
-                              image: FileImage(coverImage!),
-                              fit: BoxFit.cover,
+                  /// Preview
+                  GestureDetector(
+                    onTap: pickCoverImage,
+                    child: Container(
+                      height: 700,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.grey[900],
+                        image: coverImage != null
+                            ? DecorationImage(
+                                image: FileImage(coverImage!),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                      ),
+                      child: coverImage == null
+                          ? const Center(
+                              child: Icon(
+                                Icons.add_photo_alternate_rounded,
+                                color: Colors.white,
+                                size: 150,
+                              ),
                             )
                           : null,
                     ),
-                    child: coverImage == null
-                        ? const Center(
-                            child: Icon(
-                              Icons.add_photo_alternate_rounded,
-                              color: Colors.white,
-                              size: 150,
-                            ),
-                          )
-                        : null,
                   ),
-                ),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 30),
 
-                /// Upload Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: coverImage == null || uploading
-                        ? null
-                        : uploadCoverImage,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                  /// Upload Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: coverImage == null || uploading
+                          ? null
+                          : uploadCoverImage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      "Upload Cover",
-                      style: GoogleFonts.cormorantGaramond(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
+                      child: Text(
+                        "Upload Cover",
+                        style: GoogleFonts.cormorantGaramond(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 30),
+                ],
+              ),
             ),
           ),
-
-          /// Loading overlay
           if (uploading)
             Container(
               color: Colors.black45,
@@ -186,16 +187,13 @@ class _WeddingCoverUploadState extends State<WeddingCoverUpload> {
   }
 
   Widget _hintText(String text) {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Text(
-        text,
-        style: GoogleFonts.cormorantGaramond(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          fontStyle: FontStyle.italic,
-          color: Colors.white,
-        ),
+    return Text(
+      text,
+      style: GoogleFonts.cormorantGaramond(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+        color: Colors.white,
       ),
     );
   }
