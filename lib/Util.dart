@@ -90,11 +90,11 @@ Future<List<dynamic>> fetchWeddingData() async {
 
 //Helper function to open Google Maps at specific coordinates i've used it on the map displayed on the homescree.
 Future<void> openGoogleMaps(double lat, double lng) async {
-  final uri = Uri.parse(
+  final Uri url = Uri.parse(
     'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
   );
 
-  if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+  if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
     throw 'Could not open Google Maps';
   }
 }

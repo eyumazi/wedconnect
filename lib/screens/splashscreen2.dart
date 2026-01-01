@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:wedconnect/Authentication/Homepage%20text.dart';
+
+import '../Authentication/HomeScreen.dart';
 
 class Splashscreen2 extends StatefulWidget {
   const Splashscreen2({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _Splashscreen extends State<Splashscreen2> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomepageTest()),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
         );
       }
     });
