@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart' show GoogleSignIn;
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wedconnect/Authentication/Wrapper.dart';
 import 'package:wedconnect/Reusable%20components/Button3.dart';
@@ -116,14 +117,29 @@ class _HomeScreenState extends State<HomeScreen> {
     if (isLoading) {
       return Scaffold(
         body: const Center(child: CircularProgressIndicator()),
-        bottomNavigationBar: _buildBottomNavigationBar(),
+        bottomNavigationBar: SafeArea(
+          child: Material(
+            type: MaterialType.transparency,
+            child: LuxuryBottomNav(
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+            ),
+          ),
+        ),
       );
     }
 
     if (errorMessage.isNotEmpty || weddingData.isEmpty) {
       return Scaffold(
-        body: _buildDefaultLayout(screenHeight),
-        bottomNavigationBar: _buildBottomNavigationBar(),
+        bottomNavigationBar: SafeArea(
+          child: Material(
+            type: MaterialType.transparency,
+            child: LuxuryBottomNav(
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+            ),
+          ),
+        ),
       );
     }
 
@@ -166,7 +182,15 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Icon(Icons.logout, color: Colors.black),
             )
           : null,
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: SafeArea(
+        child: Material(
+          type: MaterialType.transparency,
+          child: LuxuryBottomNav(
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+          ),
+        ),
+      ),
     );
   }
 
@@ -358,39 +382,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: 20),
           // CONTENT SECTION
-          Container(
-            width: double.infinity,
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 40),
-            child: Column(
-              children: [
-                Text(
-                  'Welcome Back!',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  user?.email ?? 'User',
-                  style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-                ),
-                const SizedBox(height: 40),
-
-                /// 👇 Add dashboard cards here
-              ],
-            ),
-          ),
         ],
       ),
     );
   }
 
-  //BOTTOM NAVIGATION BAR
-
-  /// 🔹 FALLBACK LAYOUT
+  //FALLBACK LAYOUT
   Widget _buildDefaultLayout(double screenHeight) {
     return Container(
       height: screenHeight,
@@ -429,77 +426,214 @@ class _HomeScreenState extends State<HomeScreen> {
   }) {
     return GestureDetector(
       onTap: () => openGoogleMaps(lat, lng),
-      child: Card(
-        color: const Color(0xFFF8E6EC).withOpacity(0.7),
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              /// TITLE
-              Text(
-                "VENUE",
-                style: GoogleFonts.cinzelDecorative(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w700,
-                ),
+      child: Container(
+        child: Column(
+          children: [
+            /// TITLE
+            Text(
+              "VENUE",
+              style: GoogleFonts.cinzelDecorative(
+                fontSize: 25,
+                fontWeight: FontWeight.w700,
               ),
+            ),
 
-              const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-              /// VENUE NAME
-              Text(
-                venueName,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.cormorantGaramond(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                ),
+            /// VENUE NAME
+            Text(
+              venueName,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cormorantGaramond(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
               ),
+            ),
 
-              const SizedBox(height: 6),
+            const SizedBox(height: 6),
 
-              /// ADDRESS
-              const SizedBox(height: 16),
+            /// ADDRESS
+            const SizedBox(height: 16),
 
-              /// MAP PREVIEW (FREE)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Stack(
-                  children: [
-                    Image.memory(
-                      _mapImageBytes!,
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
+            /// MAP PREVIEW (FREE)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Stack(
+                children: [
+                  Image.memory(
+                    _mapImageBytes!,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
 
-                    /// Overlay
-                    Positioned(
-                      bottom: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.65),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Text(
-                          "Open in Google Maps",
-                          style: TextStyle(color: Colors.white, fontSize: 12),
-                        ),
+                  /// Overlay
+                  Positioned(
+                    bottom: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.65),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Text(
+                        "Open in Google Maps",
+                        style: TextStyle(color: Colors.white, fontSize: 12),
                       ),
                     ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LuxuryBottomNav extends StatelessWidget {
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+  static const List<String> _labels = [
+    'Home',
+    'Guest List',
+    'Sign Board',
+    'Gallery',
+    'Thank You',
+  ];
+
+  const LuxuryBottomNav({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(20, 0, 20, 18),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFBE9F0),
+          borderRadius: BorderRadius.circular(36),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 25,
+              offset: const Offset(0, 12),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(5, (index) {
+            return _LuxuryNavItem(
+              isSelected: currentIndex == index,
+              onTap: () => onTap(index),
+              icon: _placeholderIcon(index),
+              label: _labels[index],
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  /// TEMP icons – you will replace these later
+  Widget _placeholderIcon(int index) {
+    switch (index) {
+      case 0:
+        return Icon(FontAwesome.home);
+      case 1:
+        return Icon(FontAwesome.users);
+      case 2:
+        return Icon(Icons.rate_review);
+      case 3:
+        return Icon(FontAwesome.camera);
+      case 4:
+        return Icon(Icons.favorite);
+      default:
+        return Icon(Icons.circle);
+    }
+  }
+}
+
+class _LuxuryNavItem extends StatelessWidget {
+  final bool isSelected;
+  final VoidCallback onTap;
+  final Widget icon;
+  final String label;
+
+  const _LuxuryNavItem({
+    required this.isSelected,
+    required this.onTap,
+    required this.icon,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.translucent,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected
+                  ? const Color(0xFFFF8FAF)
+                  : const Color(0xFFFDEFF4),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: Colors.pinkAccent.withOpacity(0.35),
+                        blurRadius: 14,
+                        offset: const Offset(0, 8),
+                      ),
+                    ]
+                  : [],
+            ),
+            child: IconTheme(
+              data: IconThemeData(
+                size: 22,
+                color: isSelected
+                    ? Colors.white
+                    : Colors.pinkAccent.withOpacity(0.8),
+              ),
+              child: icon,
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 220),
+            opacity: isSelected ? 1 : 0.45,
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 220),
+              offset: isSelected ? Offset.zero : const Offset(0, 0.2),
+              child: Text(
+                label,
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: Colors.pinkAccent.shade700,
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
