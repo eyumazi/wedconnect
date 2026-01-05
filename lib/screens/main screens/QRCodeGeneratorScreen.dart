@@ -1,0 +1,231 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class QRCodeGeneratorScreen extends StatefulWidget {
+  final String guestId;
+  final String guestName;
+
+  const QRCodeGeneratorScreen({
+    Key? key,
+    required this.guestId,
+    required this.guestName,
+  }) : super(key: key);
+
+  @override
+  State<QRCodeGeneratorScreen> createState() => _QRCodeGeneratorScreenState();
+}
+
+class _QRCodeGeneratorScreenState extends State<QRCodeGeneratorScreen> {
+  String? qrData;
+  bool isLoading = true;
+
+  final supabase = Supabase.instance.client;
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+
+  @override
+  void initState() {
+    super.initState();
+    _generateInvitationQRCode();
+  }
+
+  // ===== Generate QR bytes =====
+  Future<Uint8List?> _generateQrBytes({double size = 300}) async {
+    if (qrData == null || qrData!.isEmpty) return null;
+
+    final painter = QrPainter(
+      data: qrData!,
+      version: QrVersions.auto,
+      color: Colors.black,
+      emptyColor: Colors.white,
+    );
+
+    // 👇 PASS INT DIRECTLY (NO CAST!)
+    final ui.Image image = await painter.toImage(size);
+
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+
+    return byteData?.buffer.asUint8List();
+  }
+
+  // ===== Generate QR Token =====
+  Future<void> _generateInvitationQRCode() async {
+    try {
+      final response = await supabase.rpc(
+        'generate_invitation_token',
+        params: {'guest_id_param': widget.guestId},
+      );
+
+      setState(() {
+        qrData = response as String?;
+        isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('QR generation error: $e');
+      setState(() => isLoading = false);
+    }
+  }
+
+  // ===== Save to Gallery =====
+  Future<void> _saveQRCodeToGallery() async {
+    try {
+      final bytes = await _generateQrBytes(size: 400);
+      if (bytes == null) return;
+
+      final directory = Directory('/storage/emulated/0/Pictures/WedConnect');
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      final file = File('${directory.path}/Invitation_${widget.guestName}.png');
+
+      await file.writeAsBytes(bytes);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('QR Code saved to Pictures/WedConnect'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Save failed: $e')));
+    }
+  }
+
+  // ===== Share QR =====
+  Future<void> _shareQRCode() async {
+    try {
+      final bytes = await _generateQrBytes();
+      if (bytes == null) return;
+
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/Invitation_${widget.guestName}.png');
+
+      await file.writeAsBytes(bytes);
+
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        text:
+            'You are invited to our wedding 💍✨\n'
+            'Guest: ${widget.guestName}\n\n'
+            'Scan the QR code to access wedding details.',
+      );
+    } catch (e) {
+      _snack('Error sharing QR Code');
+    }
+  }
+
+  void _snack(String msg, {bool success = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: success ? Colors.green : null,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFEFEFEF),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          "Generate Invitation",
+          style: GoogleFonts.cormorantGaramond(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  _guestCard(),
+                  const SizedBox(height: 30),
+                  _qrCard(),
+                  const SizedBox(height: 30),
+                  _actionButtons(),
+                ],
+              ),
+            ),
+    );
+  }
+
+  Widget _guestCard() => Container(
+    padding: const EdgeInsets.all(16),
+    decoration: _boxDecoration(),
+    child: Column(
+      children: [
+        Text(
+          widget.guestName,
+          style: GoogleFonts.cormorantGaramond(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 5),
+        const Text('Invitation QR Code', style: TextStyle(color: Colors.grey)),
+      ],
+    ),
+  );
+
+  Widget _qrCard() => Container(
+    padding: const EdgeInsets.all(20),
+    decoration: _boxDecoration(),
+    child: Column(
+      children: [
+        QrImageView(
+          data: qrData ?? '',
+          size: 250,
+          backgroundColor: Colors.white,
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Scan this QR code to accept invitation',
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ),
+  );
+
+  Widget _actionButtons() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      ElevatedButton.icon(
+        onPressed: _saveQRCodeToGallery,
+        icon: const Icon(Icons.download),
+        label: const Text('Save'),
+      ),
+      ElevatedButton.icon(
+        onPressed: _shareQRCode,
+        icon: const Icon(Icons.share),
+        label: const Text('Share'),
+      ),
+    ],
+  );
+
+  BoxDecoration _boxDecoration() => BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(16),
+    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+  );
+}

@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:wedconnect/screens/main%20screens/HomeScreen.dart';
 
 class WeddingCoverUpload extends StatefulWidget {
   const WeddingCoverUpload({super.key});
@@ -62,6 +64,7 @@ class _WeddingCoverUploadState extends State<WeddingCoverUpload> {
           const SnackBar(content: Text("Cover uploaded successfully")),
         );
       }
+      Get.offAll(() => const HomeScreen());
     } catch (e) {
       debugPrint("Upload error: $e");
       if (mounted) {

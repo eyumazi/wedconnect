@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wedconnect/Reusable%20components/Button2.dart';
 import 'package:wedconnect/Util.dart';
-import 'package:wedconnect/screens/Form%20Screens/ProfileViewScreen.dart';
+import 'package:wedconnect/screens/Form%20Screens/weddingInfo.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -66,7 +66,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ProfileViewScreen()),
+        MaterialPageRoute(builder: (_) => const WeddingInfo()),
       );
     } catch (e) {
       ScaffoldMessenger.of(

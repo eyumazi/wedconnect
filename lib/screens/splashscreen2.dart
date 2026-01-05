@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
-import 'main screens/HomeScreen.dart';
+import 'package:wedconnect/Authentication/login.dart';
 
 class Splashscreen2 extends StatefulWidget {
   const Splashscreen2({Key? key}) : super(key: key);
@@ -20,7 +19,7 @@ class _Splashscreen extends State<Splashscreen2> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
+          MaterialPageRoute(builder: (context) => Login()),
         );
       }
     });

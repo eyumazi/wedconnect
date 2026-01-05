@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wedconnect/Reusable components/Button2.dart';
 import 'package:wedconnect/Util.dart';
-import 'package:wedconnect/screens/Form%20Screens/WeddingInfoPreview.dart';
+import 'package:wedconnect/screens/Form%20Screens/CoverPhotoUploadingScreen.dart';
 
 class WeddingInfo extends StatefulWidget {
   const WeddingInfo({super.key});
@@ -71,7 +71,7 @@ class _WeddingInfoState extends State<WeddingInfo> {
       // Navigate to preview screen instead of ProfileViewScreen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const WeddingPreviewScreen()),
+        MaterialPageRoute(builder: (_) => const WeddingCoverUpload()),
       );
     } catch (e) {
       if (mounted) {

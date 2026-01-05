@@ -2,9 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wedconnect/Authentication/ForgotPassword.dart';
+import 'package:wedconnect/Authentication/QRCodeScanningPage.dart';
 import 'package:wedconnect/Authentication/signup.dart';
 import 'package:wedconnect/screens/Form%20Screens/ProfileSetup.dart';
+import 'package:wedconnect/screens/main%20screens/HomeScreen.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -28,20 +31,66 @@ class _LoginState extends State<Login> {
     });
 
     try {
+      // Sign in with Firebase Auth
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      Get.offAll(() => ProfileSetupScreen());
 
-      Get.snackbar(
-        'Welcome',
-        'Successfully logged in',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Color(0xFFC19AC7),
-        colorText: Colors.white,
-        duration: Duration(seconds: 2),
-      );
+      // Get the current user
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // Initialize Supabase
+        final supabase = Supabase.instance.client;
+        final String userId = user.uid;
+
+        // Check if user exists in profiles table
+        try {
+          final response = await supabase
+              .from('profiles')
+              .select('id')
+              .eq('id', userId)
+              .maybeSingle(); // Use maybeSingle instead of single
+
+          if (response != null && response['id'] != null) {
+            Get.offAll(() => HomeScreen());
+
+            Get.snackbar(
+              'Welcome Back',
+              'Successfully logged in',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Color(0xFFC19AC7),
+              colorText: Colors.white,
+              duration: Duration(seconds: 2),
+            );
+          } else {
+            Get.offAll(() => ProfileSetupScreen());
+
+            Get.snackbar(
+              'Welcome!',
+              'Please set up your profile to continue',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Color(0xFFC19AC7),
+              colorText: Colors.white,
+              duration: Duration(seconds: 3),
+            );
+          }
+        } catch (e) {
+          // If there's an error querying, assume new user
+          print('Error checking profile: $e');
+          Get.offAll(() => ProfileSetupScreen());
+
+          Get.snackbar(
+            'Welcome!',
+            'Please set up your profile',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Color(0xFFC19AC7),
+            colorText: Colors.white,
+            duration: Duration(seconds: 3),
+          );
+        }
+      }
     } on FirebaseAuthException catch (e) {
       String errorMessage;
       switch (e.code) {
@@ -69,9 +118,10 @@ class _LoginState extends State<Login> {
         colorText: Colors.white,
       );
     } catch (e) {
+      print('Unexpected error: $e');
       Get.snackbar(
         'Error',
-        'An unexpected error occurred',
+        'An unexpected error occurred: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Color(0xFFFE96AF),
         colorText: Colors.white,
@@ -360,6 +410,40 @@ class _LoginState extends State<Login> {
                       ),
                       child: Text(
                         'Create New Account',
+                        style: GoogleFonts.cormorantGaramond(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFC19AC7),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 40),
+
+                  // Guest sign in button
+                  Container(
+                    width: double.infinity,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(
+                        color: Color(0xFFC19AC7).withOpacity(0.3),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () => Get.to(() => QRScanScreen()),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                      ),
+                      child: Text(
+                        'Sign in as a guest',
                         style: GoogleFonts.cormorantGaramond(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
