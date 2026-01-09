@@ -1,119 +1,119 @@
 import 'dart:convert' show base64Decode;
 import 'dart:typed_data';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart' show GoogleSignIn;
 import 'package:icons_flutter/icons_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wedconnect/Authentication/Wrapper.dart';
 import 'package:wedconnect/Reusable%20components/Button3.dart';
 import 'package:wedconnect/Reusable%20components/CustomUploadingButton.dart';
 import 'package:wedconnect/Util.dart' show openGoogleMaps;
-import 'package:wedconnect/screens/Form%20Screens/ProfileSetup.dart';
-import 'package:wedconnect/screens/main%20screens/GuestListScreen.dart';
 
 class GuestHomeScreen extends StatefulWidget {
-  const GuestHomeScreen({super.key});
+  final String? guestToken; // Optional: Pass guest token if needed
+
+  const GuestHomeScreen({super.key, this.guestToken});
 
   @override
   State<GuestHomeScreen> createState() => _GuestHomeScreenState();
 }
 
-Future<void> signout() async {
-  final GoogleSignIn googleSignIn = GoogleSignIn();
-  await googleSignIn.signOut();
-  await FirebaseAuth.instance.signOut();
+Future<void> guestSignout() async {
+  // For guest, just go back to login/wrapper
   Get.offAll(() => const Wrapper());
 }
 
 class _GuestHomeScreenState extends State<GuestHomeScreen> {
-  final user = FirebaseAuth.instance.currentUser;
   final supabase = Supabase.instance.client;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
   List<dynamic> weddingData = [];
-  Map<String, dynamic>? userProfile;
   bool isLoading = true;
   String errorMessage = '';
   Uint8List? _mapImageBytes;
   int _selectedIndex = 0; // For bottom navigation bar
+  String? guestName;
+  String? guestToken;
 
-  // Bottom navigation bar items
+  // Bottom navigation bar items - REMOVED Guest List
   final List<Widget> _pages = [
     const SizedBox(), // Home (handled separately)
-    GuestScreen(), // Guest List ✅
     Placeholder(), // Sign Board
     Placeholder(), // Gallery
     Placeholder(), // Thank You
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    guestToken = widget.guestToken;
+    _loadWeddingData();
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    // You can add navigation logic here
+    // Navigation logic for guest screens
     if (index == 1) {
-      // Navigate to gallery or other page
+      // Navigate to Sign Board
     } else if (index == 2) {
-      // Navigate to guests page
+      // Navigate to Gallery/Photo Wall
     } else if (index == 3) {
-      // Navigate to profile page
+      // Navigate to Thank You
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
-  }
-
-  Future<void> _loadUserData() async {
+  Future<void> _loadWeddingData() async {
     try {
       setState(() {
         isLoading = true;
         errorMessage = '';
       });
 
-      // Load user profile first
-      final profileResponse = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('id', uid)
-          .maybeSingle();
+      // Try to load the first wedding in the database
+      // In a real app, you might want to filter by wedding ID or organization
+      final response = await supabase
+          .from('weddings')
+          .select()
+          .order('created_at', ascending: false)
+          .limit(1);
 
       setState(() {
-        userProfile = profileResponse;
+        weddingData = response;
+
+        if (weddingData.isNotEmpty &&
+            weddingData[0]['venue_map_image'] != null) {
+          try {
+            _mapImageBytes = base64Decode(weddingData[0]['venue_map_image']);
+          } catch (e) {
+            print('Error decoding image: $e');
+          }
+        }
       });
 
-      // Only load wedding data if profile exists
-      if (userProfile != null) {
-        // Fetches wedding data for the current user
-        final response = await supabase
-            .from('weddings')
-            .select()
-            .eq('user_id', uid)
-            .order('created_at', ascending: false)
-            .limit(1);
+      // If we have a guest token, try to fetch guest name
+      if (guestToken != null) {
+        try {
+          final guestResponse = await supabase
+              .from('guests')
+              .select('guest_name')
+              .eq('invitation_token', guestToken!)
+              .maybeSingle();
 
-        setState(() {
-          weddingData = response;
-
-          if (weddingData.isNotEmpty &&
-              weddingData[0]['venue_map_image'] != null) {
-            try {
-              _mapImageBytes = base64Decode(weddingData[0]['venue_map_image']);
-            } catch (e) {
-              print('Error decoding image: $e');
-            }
+          if (guestResponse != null) {
+            setState(() {
+              guestName = guestResponse['guest_name'] as String?;
+            });
           }
-        });
+        } catch (e) {
+          print('Error loading guest info: $e');
+        }
       }
     } catch (e) {
-      print('Error loading user data: $e');
+      print('Error loading wedding data: $e');
       setState(() {
-        errorMessage = 'Failed to load data. Please try again.';
+        errorMessage = 'Failed to load wedding details. Please try again.';
       });
     } finally {
       setState(() {
@@ -122,36 +122,30 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
     }
   }
 
-  void _navigateToProfileSetup() {
-    Get.to(() => ProfileSetupScreen());
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
-    // Check if user has profile and wedding data
-    final bool hasProfile = userProfile != null;
+    // Check if we have wedding data
     final bool hasWeddingData = weddingData.isNotEmpty;
 
     return Scaffold(
-      extendBodyBehindAppBar:
-          _selectedIndex == 0 && hasProfile && hasWeddingData,
+      extendBodyBehindAppBar: _selectedIndex == 0 && hasWeddingData,
       body: _selectedIndex == 0
-          ? _buildHomeContent(screenHeight, hasProfile, hasWeddingData)
+          ? _buildHomeContent(screenHeight, hasWeddingData)
           : _pages[_selectedIndex],
-      floatingActionButton: _selectedIndex == 0 && hasProfile && hasWeddingData
+      floatingActionButton: _selectedIndex == 0 && hasWeddingData
           ? FloatingActionButton(
-              onPressed: signout,
+              onPressed: guestSignout,
               backgroundColor: Colors.white,
               child: const Icon(Icons.logout, color: Colors.black),
             )
           : null,
-      bottomNavigationBar: hasProfile && hasWeddingData
+      bottomNavigationBar: hasWeddingData
           ? SafeArea(
               child: Material(
                 type: MaterialType.transparency,
-                child: LuxuryBottomNav(
+                child: GuestLuxuryBottomNav(
                   currentIndex: _selectedIndex,
                   onTap: _onItemTapped,
                 ),
@@ -161,42 +155,21 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
     );
   }
 
-  Widget _buildHomeContent(
-    double screenHeight,
-    bool hasProfile,
-    bool hasWeddingData,
-  ) {
+  Widget _buildHomeContent(double screenHeight, bool hasWeddingData) {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // If user doesn't have profile
-    if (!hasProfile) {
-      return _buildProfileSetupPrompt(
-        title: 'Welcome to WedConnect!',
-        subtitle: 'You need to set up your profile first',
-        buttonText: 'Set Up Profile',
-      );
-    }
-
-    // If user has profile but no wedding data
+    // If no wedding data found
     if (!hasWeddingData) {
-      return _buildProfileSetupPrompt(
-        title: 'Complete Your Wedding Details',
-        subtitle: 'Add your wedding information to get started',
-        buttonText: 'Add Wedding Details',
-      );
+      return _buildWelcomeScreen();
     }
 
-    // Normal flow - user has both profile and wedding data
+    // Normal flow - wedding data available
     return _buildWeddingContent(screenHeight);
   }
 
-  Widget _buildProfileSetupPrompt({
-    required String title,
-    required String subtitle,
-    required String buttonText,
-  }) {
+  Widget _buildWelcomeScreen() {
     return Container(
       color: Color(0xFFFFE3EF),
       child: Center(
@@ -205,6 +178,20 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Welcome message with guest name if available
+              if (guestName != null) ...[
+                Text(
+                  'Welcome, $guestName!',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFC19AC7),
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
+
               // Decorative Icon
               Container(
                 width: 120,
@@ -221,24 +208,13 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                 ),
               ),
 
-              SizedBox(height: 30),
-
-              // Title
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.playfairDisplay(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFFC19AC7),
-                ),
-              ),
-
-              SizedBox(height: 16),
+              SizedBox(height: 20),
 
               // Subtitle
               Text(
-                subtitle,
+                guestName != null
+                    ? 'Thank you for joining us on this special day'
+                    : 'Welcome to the Wedding!',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.cormorantGaramond(
                   fontSize: 20,
@@ -248,53 +224,78 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
 
               SizedBox(height: 30),
 
-              // Instruction List
-              Container(
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFFC19AC7).withOpacity(0.1),
-                      blurRadius: 20,
-                      offset: Offset(0, 10),
+              // Error message if no wedding data
+              if (errorMessage.isNotEmpty)
+                Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFFC19AC7).withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    errorMessage,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.cormorantGaramond(
+                      fontSize: 16,
+                      color: Color(0xFFC19AC7),
                     ),
-                  ],
+                  ),
+                )
+              else
+                // Wedding Information Card
+                Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFFC19AC7).withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      _buildInfoItem(
+                        icon: Icons.calendar_today,
+                        text: 'View wedding details',
+                      ),
+                      SizedBox(height: 12),
+                      _buildInfoItem(
+                        icon: Icons.photo_camera,
+                        text: 'Browse the photo gallery',
+                      ),
+                      SizedBox(height: 12),
+                      _buildInfoItem(
+                        icon: Icons.rate_review,
+                        text: 'Leave a message on the sign board',
+                      ),
+                      SizedBox(height: 12),
+                      _buildInfoItem(
+                        icon: Icons.favorite,
+                        text: 'Share your love and wishes',
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    _buildInstructionItem(
-                      icon: Icons.person,
-                      text: 'Add your personal details',
-                    ),
-                    SizedBox(height: 12),
-                    _buildInstructionItem(
-                      icon: Icons.favorite,
-                      text: "Enter your partner's name",
-                    ),
-                    SizedBox(height: 12),
-                    _buildInstructionItem(
-                      icon: Icons.calendar_today,
-                      text: 'Set your wedding info',
-                    ),
-                    SizedBox(height: 12),
-                    _buildInstructionItem(
-                      icon: Icons.photo_camera,
-                      text: 'Upload a profile photo',
-                    ),
-                  ],
-                ),
-              ),
 
               SizedBox(height: 40),
 
-              // Setup Button
+              // Explore Button
               Container(
                 width: double.infinity,
                 child: CustomUploadingButton(
-                  text: buttonText,
-                  onPressed: _navigateToProfileSetup,
+                  text: 'Explore Wedding',
+                  onPressed: _loadWeddingData,
                   isLoading: false,
                 ),
               ),
@@ -307,7 +308,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
     );
   }
 
-  Widget _buildInstructionItem({required IconData icon, required String text}) {
+  Widget _buildInfoItem({required IconData icon, required String text}) {
     return Row(
       children: [
         Container(
@@ -440,10 +441,23 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
 
                                 return Column(
                                   children: [
+                                    // Guest welcome if available
+                                    if (guestName != null) ...[
+                                      Text(
+                                        'Welcome, $guestName!',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.playfairDisplay(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFFC19AC7),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+                                    ],
+
                                     // WEDDING NAME
                                     Text(
-                                      weddingName ??
-                                          'Wedding name not provided',
+                                      weddingName ?? 'Wedding Celebration',
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.playfairDisplay(
                                         fontSize: 38,
@@ -476,7 +490,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                                     const SizedBox(height: 15),
 
                                     Text(
-                                      'Until our wedding',
+                                      'Until their wedding',
                                       style: GoogleFonts.allura(
                                         fontSize: 28,
                                         fontWeight: FontWeight.w600,
@@ -522,19 +536,36 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  CustomElevatedButton3(text: "Sign Board", onPressed: () {}),
-                  CustomElevatedButton3(text: "Photo Wall", onPressed: () {}),
+                  CustomElevatedButton3(
+                    text: "Sign Board",
+                    onPressed: () {
+                      setState(() {
+                        _selectedIndex = 1;
+                      });
+                    },
+                  ),
+                  CustomElevatedButton3(
+                    text: "Photo Wall",
+                    onPressed: () {
+                      setState(() {
+                        _selectedIndex = 2;
+                      });
+                    },
+                  ),
                 ],
               ),
               SizedBox(height: 25),
               CustomElevatedButton3(
-                text: "Manage Profile",
-                onPressed: _navigateToProfileSetup,
+                text: "Thank You",
+                onPressed: () {
+                  setState(() {
+                    _selectedIndex = 3;
+                  });
+                },
               ),
             ],
           ),
           SizedBox(height: 20),
-          // CONTENT SECTION
         ],
       ),
     );
@@ -636,18 +667,17 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
   }
 }
 
-class LuxuryBottomNav extends StatelessWidget {
+class GuestLuxuryBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
   static const List<String> _labels = [
     'Home',
-    'Guest List',
     'Sign Board',
     'Gallery',
     'Thank You',
   ];
 
-  const LuxuryBottomNav({
+  const GuestLuxuryBottomNav({
     super.key,
     required this.currentIndex,
     required this.onTap,
@@ -672,8 +702,8 @@ class LuxuryBottomNav extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: List.generate(5, (index) {
-            return _LuxuryNavItem(
+          children: List.generate(4, (index) {
+            return _GuestLuxuryNavItem(
               isSelected: currentIndex == index,
               onTap: () => onTap(index),
               icon: _placeholderIcon(index),
@@ -691,12 +721,10 @@ class LuxuryBottomNav extends StatelessWidget {
       case 0:
         return Icon(FontAwesome.home);
       case 1:
-        return Icon(FontAwesome.users);
-      case 2:
         return Icon(Icons.rate_review);
-      case 3:
+      case 2:
         return Icon(FontAwesome.camera);
-      case 4:
+      case 3:
         return Icon(Icons.favorite);
       default:
         return Icon(Icons.circle);
@@ -704,13 +732,13 @@ class LuxuryBottomNav extends StatelessWidget {
   }
 }
 
-class _LuxuryNavItem extends StatelessWidget {
+class _GuestLuxuryNavItem extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
   final Widget icon;
   final String label;
 
-  const _LuxuryNavItem({
+  const _GuestLuxuryNavItem({
     required this.isSelected,
     required this.onTap,
     required this.icon,

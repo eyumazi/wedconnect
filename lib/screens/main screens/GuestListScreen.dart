@@ -275,84 +275,87 @@ class _GuestScreenState extends State<GuestScreen> {
     );
   }
 
-  Widget _buildSearchAndFilter() {
+  Widget _buildSearchBar() {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(25),
       ),
-      child: Column(
-        children: [
-          // Search Bar
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Search guests...',
-              prefixIcon: Icon(Icons.search, color: Color(0xFFC19AC7)),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search guests...',
+          prefixIcon: Icon(Icons.search, color: Color(0xFFC19AC7)),
+          border: InputBorder.none,
+          hintStyle: TextStyle(color: Colors.grey[500]),
+        ),
+        onChanged: (value) {
+          setState(() {
+            searchQuery = value;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildFilterChips() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 25),
+
+        Wrap(
+          spacing: 20,
+          runSpacing: 20,
+          children: [
+            FilterChip(
+              label: Text('All'),
+              selected: arrivalFilter == ArrivalFilter.all,
+              onSelected: (_) {
+                setState(() {
+                  arrivalFilter = ArrivalFilter.all;
+                });
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
               ),
-              filled: true,
-              fillColor: Color(0xFFF5F5F5),
+              selectedColor: Color(0xFFC19AC7),
+              checkmarkColor: Colors.white,
+              showCheckmark: true,
             ),
-            onChanged: (value) {
-              setState(() {
-                searchQuery = value;
-              });
-            },
-          ),
-
-          SizedBox(height: 12),
-
-          // Filter Chips
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              FilterChip(
-                label: Text('All'),
-                selected: arrivalFilter == ArrivalFilter.all,
-                onSelected: (_) {
-                  setState(() {
-                    arrivalFilter = ArrivalFilter.all;
-                  });
-                },
-                selectedColor: Color(0xFFC19AC7),
-                checkmarkColor: Colors.white,
+            FilterChip(
+              label: Text('Arrived'),
+              selected: arrivalFilter == ArrivalFilter.arrived,
+              onSelected: (_) {
+                setState(() {
+                  arrivalFilter = ArrivalFilter.arrived;
+                });
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
               ),
-              FilterChip(
-                label: Text('Arrived'),
-                selected: arrivalFilter == ArrivalFilter.arrived,
-                onSelected: (_) {
-                  setState(() {
-                    arrivalFilter = ArrivalFilter.arrived;
-                  });
-                },
-                selectedColor: Colors.green,
-                checkmarkColor: Colors.white,
+              selectedColor: Colors.green,
+              checkmarkColor: Colors.white,
+              showCheckmark: true,
+            ),
+            FilterChip(
+              label: Text('Not Arrived'),
+              selected: arrivalFilter == ArrivalFilter.notArrived,
+              onSelected: (_) {
+                setState(() {
+                  arrivalFilter = ArrivalFilter.notArrived;
+                });
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
               ),
-              FilterChip(
-                label: Text('Not Arrived'),
-                selected: arrivalFilter == ArrivalFilter.notArrived,
-                onSelected: (_) {
-                  setState(() {
-                    arrivalFilter = ArrivalFilter.notArrived;
-                  });
-                },
-                selectedColor: Colors.red,
-                checkmarkColor: Colors.white,
-              ),
-            ],
-          ),
-        ],
-      ),
+              selectedColor: Colors.orange,
+              checkmarkColor: Colors.white,
+              showCheckmark: true,
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -539,10 +542,15 @@ class _GuestScreenState extends State<GuestScreen> {
                   ),
                 ),
 
-                SizedBox(height: 20),
+                SizedBox(height: 50),
 
-                // Search and Filter Section
-                _buildSearchAndFilter(),
+                // Search Bar
+                _buildSearchBar(),
+
+                SizedBox(height: 16),
+
+                // Filter Chips
+                _buildFilterChips(),
 
                 SizedBox(height: 20),
 
