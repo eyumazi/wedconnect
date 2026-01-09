@@ -15,11 +15,11 @@ import 'package:wedconnect/Util.dart' show openGoogleMaps;
 import 'package:wedconnect/screens/Form%20Screens/ProfileSetup.dart';
 import 'package:wedconnect/screens/main%20screens/GuestListScreen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class GuestHomeScreen extends StatefulWidget {
+  const GuestHomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<GuestHomeScreen> createState() => _GuestHomeScreenState();
 }
 
 Future<void> signout() async {
@@ -29,7 +29,7 @@ Future<void> signout() async {
   Get.offAll(() => const Wrapper());
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _GuestHomeScreenState extends State<GuestHomeScreen> {
   final user = FirebaseAuth.instance.currentUser;
   final supabase = Supabase.instance.client;
   final uid = FirebaseAuth.instance.currentUser!.uid;
@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Bottom navigation bar items
   final List<Widget> _pages = [
     const SizedBox(), // Home (handled separately)
-    Guestlistscreen(), // Guest List ✅
+    GuestScreen(), // Guest List ✅
     Placeholder(), // Sign Board
     Placeholder(), // Gallery
     Placeholder(), // Thank You

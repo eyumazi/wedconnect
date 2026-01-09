@@ -11,14 +11,14 @@ import 'package:wedconnect/screens/main%20screens/QRCodeGeneratorScreen.dart';
 
 enum ArrivalFilter { all, arrived, notArrived }
 
-class Guestlistscreen extends StatefulWidget {
-  const Guestlistscreen({super.key});
+class GuestScreen extends StatefulWidget {
+  const GuestScreen({super.key});
 
   @override
-  State<Guestlistscreen> createState() => _GuestlistscreenState();
+  State<GuestScreen> createState() => _GuestScreenState();
 }
 
-class _GuestlistscreenState extends State<Guestlistscreen> {
+class _GuestScreenState extends State<GuestScreen> {
   late Future<List<dynamic>> guests;
   String searchQuery = '';
   ArrivalFilter arrivalFilter = ArrivalFilter.all;

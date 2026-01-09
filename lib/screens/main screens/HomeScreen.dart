@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Bottom navigation bar items
   final List<Widget> _pages = [
     const SizedBox(), // Home (handled separately)
-    Guestlistscreen(), // Guest List ✅
+    GuestScreen(), // Guest List ✅
     Placeholder(), // Sign Board
     Placeholder(), // Gallery
     Placeholder(), // Thank You
