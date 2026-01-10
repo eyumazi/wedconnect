@@ -111,8 +111,24 @@ class _LoginState extends State<Login> {
       }
 
       Get.snackbar(
-        'Login Failed',
-        errorMessage,
+        '',
+        '',
+        titleText: Text(
+          'Login Failed',
+          style: GoogleFonts.inter(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+        ),
+        messageText: Text(
+          errorMessage,
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+        ),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Color(0xFFFE96AF),
         colorText: Colors.white,

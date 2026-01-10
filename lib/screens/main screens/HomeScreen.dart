@@ -14,6 +14,7 @@ import 'package:wedconnect/Reusable%20components/CustomUploadingButton.dart';
 import 'package:wedconnect/Util.dart' show openGoogleMaps;
 import 'package:wedconnect/screens/Form%20Screens/ProfileSetup.dart';
 import 'package:wedconnect/screens/main%20screens/GuestListScreen.dart';
+import 'package:wedconnect/screens/main%20screens/signBoardScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -44,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     const SizedBox(), // Home (handled separately)
     GuestScreen(), // Guest List ✅
-    Placeholder(), // Sign Board
+    Signboardscreen(), // Sign Board
     Placeholder(), // Gallery
     Placeholder(), // Thank You
   ];
