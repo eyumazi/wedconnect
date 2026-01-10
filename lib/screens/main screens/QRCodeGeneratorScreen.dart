@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -59,13 +60,32 @@ class _QRCodeGeneratorScreenState extends State<QRCodeGeneratorScreen> {
   // ===== Generate QR Token =====
   Future<void> _generateInvitationQRCode() async {
     try {
-      final response = await supabase.rpc(
-        'generate_invitation_token',
-        params: {'guest_id_param': widget.guestId},
-      );
+      // Get full guest info to embed in QR
+      final guestResponse = await supabase
+          .from('guests')
+          .select('id, guest_name, phone_number')
+          .eq('id', widget.guestId)
+          .single();
+
+      // Create a structured QR data that includes guest ID
+      final qrPayload = {
+        'type': 'guest_invitation',
+        'guest_id': widget.guestId,
+        'guest_name': guestResponse['guest_name'],
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+
+      // Convert to JSON string for QR code
+      final qrDataString = json.encode(qrPayload);
+
+      // Store this QR data in the guest's record
+      await supabase
+          .from('guests')
+          .update({'invitation_token': qrDataString})
+          .eq('id', widget.guestId);
 
       setState(() {
-        qrData = response as String?;
+        qrData = qrDataString;
         isLoading = false;
       });
     } catch (e) {

@@ -10,11 +10,14 @@ import 'package:wedconnect/Authentication/Wrapper.dart';
 import 'package:wedconnect/Reusable%20components/Button3.dart';
 import 'package:wedconnect/Reusable%20components/CustomUploadingButton.dart';
 import 'package:wedconnect/Util.dart' show openGoogleMaps;
+import 'package:wedconnect/screens/main%20screens/photoWallScreen.dart';
+import 'package:wedconnect/screens/main%20screens/signBoardScreen.dart'; // Import Signboardscreen
 
 class GuestHomeScreen extends StatefulWidget {
   final String? guestToken; // Optional: Pass guest token if needed
+  final String? guestId; // Add this parameter
 
-  const GuestHomeScreen({super.key, this.guestToken});
+  const GuestHomeScreen({super.key, this.guestToken, this.guestId});
 
   @override
   State<GuestHomeScreen> createState() => _GuestHomeScreenState();
@@ -34,34 +37,109 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
   int _selectedIndex = 0; // For bottom navigation bar
   String? guestName;
   String? guestToken;
+  String? _guestId; // Store guest ID
 
   // Bottom navigation bar items - REMOVED Guest List
-  final List<Widget> _pages = [
-    const SizedBox(), // Home (handled separately)
-    Placeholder(), // Sign Board
-    Placeholder(), // Gallery
-    Placeholder(), // Thank You
-  ];
+  late List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
     guestToken = widget.guestToken;
+    _guestId = widget.guestId; // Use passed guestId if available
+
+    if (_guestId != null) {
+      _loadGuestInfo();
+    } else if (guestToken != null) {
+      _loadGuestIdFromToken();
+    }
+
     _loadWeddingData();
+
+    // Initialize pages
+    _pages = [
+      const SizedBox(), // Home (handled separately)
+      _guestId != null
+          ? Signboardscreen(
+              isHost: false,
+              guestId: _guestId!,
+            ) // Sign Board for GUESTS
+          : const Placeholder(), // Placeholder if no guestId yet
+      PhotoWallScreen(isHost: false, guestId: _guestId), // Gallery
+      const Placeholder(), // Thank You
+    ];
+  }
+
+  Future<void> _loadGuestIdFromToken() async {
+    if (guestToken != null) {
+      try {
+        final guestResponse = await supabase
+            .from('guests')
+            .select('id, guest_name')
+            .eq('invitation_token', guestToken!)
+            .maybeSingle();
+
+        if (guestResponse != null) {
+          setState(() {
+            guestName = guestResponse['guest_name'] as String?;
+            _guestId = guestResponse['id'] as String?;
+            _updatePages();
+          });
+        }
+      } catch (e) {
+        print('Error loading guest info from token: $e');
+      }
+    }
+  }
+
+  Future<void> _loadGuestInfo() async {
+    if (_guestId != null) {
+      try {
+        final guestResponse = await supabase
+            .from('guests')
+            .select('guest_name')
+            .eq('id', _guestId!)
+            .single();
+
+        if (guestResponse != null) {
+          setState(() {
+            guestName = guestResponse['guest_name'] as String?;
+          });
+        }
+      } catch (e) {
+        print('Error loading guest info: $e');
+      }
+    }
+  }
+
+  void _updatePages() {
+    setState(() {
+      _pages = [
+        const SizedBox(), // Home
+        _guestId != null
+            ? Signboardscreen(
+                isHost: false,
+                guestId: _guestId!,
+              ) // Sign Board for GUESTS
+            : const Placeholder(),
+        const Placeholder(), // Gallery
+        const Placeholder(), // Thank You
+      ];
+    });
   }
 
   void _onItemTapped(int index) {
+    if (index == 1 && _guestId == null) {
+      // Don't navigate to sign board if no guest ID
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please scan your invitation QR first')),
+      );
+      return;
+    }
+
     setState(() {
       _selectedIndex = index;
     });
-    // Navigation logic for guest screens
-    if (index == 1) {
-      // Navigate to Sign Board
-    } else if (index == 2) {
-      // Navigate to Gallery/Photo Wall
-    } else if (index == 3) {
-      // Navigate to Thank You
-    }
   }
 
   Future<void> _loadWeddingData() async {
@@ -91,25 +169,6 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
           }
         }
       });
-
-      // If we have a guest token, try to fetch guest name
-      if (guestToken != null) {
-        try {
-          final guestResponse = await supabase
-              .from('guests')
-              .select('guest_name')
-              .eq('invitation_token', guestToken!)
-              .maybeSingle();
-
-          if (guestResponse != null) {
-            setState(() {
-              guestName = guestResponse['guest_name'] as String?;
-            });
-          }
-        } catch (e) {
-          print('Error loading guest info: $e');
-        }
-      }
     } catch (e) {
       print('Error loading wedding data: $e');
       setState(() {
@@ -449,7 +508,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                                         style: GoogleFonts.playfairDisplay(
                                           fontSize: 28,
                                           fontWeight: FontWeight.w600,
-                                          color: Color(0xFFC19AC7),
+                                          color: Colors.black,
                                         ),
                                       ),
                                       SizedBox(height: 10),
@@ -539,9 +598,19 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                   CustomElevatedButton3(
                     text: "Sign Board",
                     onPressed: () {
-                      setState(() {
-                        _selectedIndex = 1;
-                      });
+                      if (_guestId == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Please scan your invitation QR first',
+                            ),
+                          ),
+                        );
+                      } else {
+                        setState(() {
+                          _selectedIndex = 1;
+                        });
+                      }
                     },
                   ),
                   CustomElevatedButton3(

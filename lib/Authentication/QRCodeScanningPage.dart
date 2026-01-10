@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,6 +28,25 @@ class _QRScanScreenState extends State<QRScanScreen> {
     super.dispose();
   }
 
+  // Function to mark guest as arrived
+  Future<void> _markGuestAsArrived(String guestId) async {
+    try {
+      // Update the guest's is_arrived status and set arrival_time
+      await supabase
+          .from('guests')
+          .update({
+            'is_arrived': true,
+            'arrival_time': DateTime.now().toIso8601String(),
+          })
+          .eq('id', guestId);
+
+      print('Guest $guestId marked as arrived');
+    } catch (e) {
+      print('Error marking guest as arrived: $e');
+      // Don't throw error here - we still want to let the guest in
+    }
+  }
+
   Future<void> processQRCode(String qrData) async {
     if (isProcessing) return;
 
@@ -36,7 +57,55 @@ class _QRScanScreenState extends State<QRScanScreen> {
     });
 
     try {
-      // First, check if this is a valid guest QR code
+      // Try to parse as JSON first (new QR format)
+      Map<String, dynamic>? qrJson;
+      try {
+        qrJson = json.decode(qrData);
+      } catch (_) {
+        // Not JSON, treat as old format
+      }
+
+      String? guestId;
+      String? guestName;
+
+      if (qrJson != null && qrJson['type'] == 'guest_invitation') {
+        // New QR format with guest info
+        guestId = qrJson['guest_id'] as String?;
+        guestName = qrJson['guest_name'] as String?;
+
+        if (guestId != null) {
+          // Verify guest exists
+          final guestResponse = await supabase
+              .from('guests')
+              .select()
+              .eq('id', guestId)
+              .maybeSingle();
+
+          if (guestResponse != null) {
+            guestName = guestResponse['guest_name'] ?? 'Guest';
+
+            // MARK GUEST AS ARRIVED
+            await _markGuestAsArrived(guestId);
+
+            setState(() {
+              isSuccess = true;
+              statusMessage = 'Welcome, $guestName!';
+            });
+
+            await Future.delayed(Duration(seconds: 1));
+
+            if (mounted) {
+              // Navigate to GuestHomeScreen WITH guestId
+              Get.offAll(
+                () => GuestHomeScreen(guestToken: qrData, guestId: guestId),
+              );
+            }
+            return;
+          }
+        }
+      }
+
+      // Fallback: Check if it's a valid guest QR code (old format - invitation_token)
       final guestResponse = await supabase
           .from('guests')
           .select()
@@ -44,79 +113,75 @@ class _QRScanScreenState extends State<QRScanScreen> {
           .maybeSingle();
 
       if (guestResponse != null) {
-        // Guest exists in database
-        final guestName = guestResponse['guest_name'] ?? 'Guest';
+        guestId = guestResponse['id'];
+        guestName = guestResponse['guest_name'] ?? 'Guest';
+
+        // MARK GUEST AS ARRIVED
+        await _markGuestAsArrived(guestId!);
 
         setState(() {
           isSuccess = true;
           statusMessage = 'Welcome, $guestName!';
         });
 
-        // Show success message briefly
-        Get.snackbar(
-          'Welcome!',
-          'Welcome $guestName!',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          duration: Duration(seconds: 2),
-        );
-
         await Future.delayed(Duration(seconds: 1));
 
         if (mounted) {
-          // Use Get.offAll to navigate and clear all previous routes
-          Get.offAll(() => GuestHomeScreen());
+          // Navigate to GuestHomeScreen WITH guestId
+          Get.offAll(
+            () => GuestHomeScreen(guestToken: qrData, guestId: guestId),
+          );
         }
-      } else {
-        // Not a valid guest QR code - check if it's an arrival QR
-        try {
-          final response = await supabase.rpc(
-            'mark_guest_arrived',
-            params: {'qr_data_param': qrData},
-          );
+        return;
+      }
 
-          final result = response as Map<String, dynamic>;
+      // If not a guest invitation QR, check if it's an arrival QR (for separate arrival scanning)
+      try {
+        final response = await supabase.rpc(
+          'mark_guest_arrived',
+          params: {'qr_data_param': qrData},
+        );
 
-          setState(() {
-            isSuccess = result['success'] ?? false;
-            statusMessage = result['message'] ?? 'Processing complete';
+        final result = response as Map<String, dynamic>;
 
-            if (result['guest_name'] != null) {
-              statusMessage = '${result['guest_name']} - ${statusMessage}';
-            }
-          });
+        setState(() {
+          isSuccess = result['success'] ?? false;
+          statusMessage = result['message'] ?? 'Processing complete';
 
-          Get.snackbar(
-            isSuccess ? 'Success' : 'Error',
-            statusMessage!,
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: isSuccess ? Colors.green : Colors.red,
-            colorText: Colors.white,
-            duration: Duration(seconds: 3),
-          );
-
-          if (isSuccess) {
-            await Future.delayed(Duration(seconds: 2));
-            resetScanner();
+          if (result['guest_name'] != null) {
+            statusMessage = '${result['guest_name']} - ${statusMessage}';
           }
-        } catch (e) {
-          // Not an arrival QR either
-          setState(() {
-            isSuccess = false;
-            statusMessage =
-                'Invalid QR code. Please scan a valid guest invitation.';
-          });
+        });
 
-          Get.snackbar(
-            'Invalid QR Code',
-            'Invalid QR code',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            duration: Duration(seconds: 3),
-          );
+        Get.snackbar(
+          isSuccess ? 'Success' : 'Error',
+          statusMessage!,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: isSuccess ? Colors.green : Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+        );
+
+        if (isSuccess) {
+          await Future.delayed(Duration(seconds: 2));
+          resetScanner();
         }
+      } catch (e) {
+        // Not an arrival QR either
+        setState(() {
+          isSuccess = false;
+          statusMessage =
+              'Invalid QR code. Please scan a valid guest invitation.';
+        });
+
+        Get.snackbar(
+          'Invalid QR Code',
+          'Invalid QR code',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+        );
       }
     } catch (e) {
       print('Error processing QR: $e');
@@ -147,6 +212,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
       scannedResult = null;
       statusMessage = null;
       isSuccess = false;
+      isProcessing = false;
     });
   }
 
@@ -198,7 +264,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
           ),
 
           // Status overlay
-          if (scannedResult != null && !isProcessing)
+          if (scannedResult != null && statusMessage != null)
             Positioned.fill(
               child: Container(
                 color: Colors.black.withOpacity(0.7),
@@ -220,7 +286,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
                         ),
                         SizedBox(height: 20),
                         Text(
-                          statusMessage ?? 'Processing',
+                          statusMessage!,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -241,7 +307,12 @@ class _QRScanScreenState extends State<QRScanScreen> {
                         if (isSuccess)
                           ElevatedButton(
                             onPressed: () {
-                              Get.offAll(() => GuestHomeScreen());
+                              if (scannedResult != null) {
+                                // Re-process the QR code to navigate properly
+                                processQRCode(scannedResult!);
+                              } else {
+                                Get.offAll(() => GuestHomeScreen());
+                              }
                             },
                             child: Text('Continue'),
                             style: ElevatedButton.styleFrom(
@@ -257,7 +328,8 @@ class _QRScanScreenState extends State<QRScanScreen> {
             ),
 
           // Loading overlay
-          if (isProcessing)
+          if (isProcessing &&
+              (statusMessage == null || statusMessage == 'Processing...'))
             Positioned.fill(
               child: Container(
                 color: Colors.black.withOpacity(0.7),
@@ -278,27 +350,28 @@ class _QRScanScreenState extends State<QRScanScreen> {
             ),
 
           // Instructions
-          Positioned(
-            bottom: 50,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                Text(
-                  'Scan your invitation QR code',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Position QR code within the frame',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
-                    fontSize: 14,
+          if (scannedResult == null && !isProcessing)
+            Positioned(
+              bottom: 50,
+              left: 0,
+              right: 0,
+              child: Column(
+                children: [
+                  Text(
+                    'Scan your invitation QR code',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
-                ),
-              ],
+                  SizedBox(height: 10),
+                  Text(
+                    'Position QR code within the frame',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
