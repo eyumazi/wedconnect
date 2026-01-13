@@ -10,6 +10,7 @@ import 'package:wedconnect/Authentication/Wrapper.dart';
 import 'package:wedconnect/Reusable%20components/Button3.dart';
 import 'package:wedconnect/Reusable%20components/CustomUploadingButton.dart';
 import 'package:wedconnect/Util.dart' show openGoogleMaps;
+import 'package:wedconnect/screens/main%20screens/ThankYouScreen.dart';
 import 'package:wedconnect/screens/main%20screens/photoWallScreen.dart';
 import 'package:wedconnect/screens/main%20screens/signBoardScreen.dart'; // Import Signboardscreen
 
@@ -60,13 +61,10 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
     _pages = [
       const SizedBox(), // Home (handled separately)
       _guestId != null
-          ? Signboardscreen(
-              isHost: false,
-              guestId: _guestId!,
-            ) // Sign Board for GUESTS
-          : const Placeholder(), // Placeholder if no guestId yet
-      PhotoWallScreen(isHost: false, guestId: _guestId), // Gallery
-      const Placeholder(), // Thank You
+          ? Signboardscreen(isHost: false, guestId: _guestId!)
+          : const Placeholder(),
+      PhotoWallScreen(isHost: false, guestId: _guestId),
+      ThankYouScreen(isHost: false), // Thank You
     ];
   }
 
@@ -122,7 +120,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
                 guestId: _guestId!,
               ) // Sign Board for GUESTS
             : const Placeholder(),
-        const Placeholder(), // Gallery
+        ThankYouScreen(isHost: false), // Gallery
         const Placeholder(), // Thank You
       ];
     });

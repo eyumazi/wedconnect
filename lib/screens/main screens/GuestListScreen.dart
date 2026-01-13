@@ -24,6 +24,12 @@ class _GuestScreenState extends State<GuestScreen> {
   ArrivalFilter arrivalFilter = ArrivalFilter.all;
   final ScrollController _scrollController = ScrollController();
 
+  // Add these variables for editing functionality
+  bool isEditing = false;
+  String? editingGuestId;
+  String? currentPhotoUrl;
+  bool isDeleteDialogOpen = false;
+
   @override
   void initState() {
     super.initState();
@@ -135,11 +141,55 @@ class _GuestScreenState extends State<GuestScreen> {
                   }
                 },
               ),
+              if (isEditing && currentPhotoUrl != null)
+                ListTile(
+                  leading: const Icon(Icons.delete, color: Colors.red),
+                  title: const Text(
+                    "Remove Current Photo",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      guestPhoto = null;
+                      currentPhotoUrl = null;
+                    });
+                  },
+                ),
             ],
           ),
         );
       },
     );
+  }
+
+  // Add method to start editing a guest
+  void _startEditingGuest(Map<String, dynamic> guest) {
+    setState(() {
+      isEditing = true;
+      editingGuestId = guest['id'];
+      guestNameController.text = guest['guest_name'];
+      guestPhoneController.text = guest['phone_number'];
+      currentPhotoUrl = guest['guest_photo_url'];
+      guestPhoto = null; // Reset new photo selection
+    });
+
+    // Scroll to top to show the form
+    _scrollController.animateTo(
+      0,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  // Add method to cancel editing
+  void _cancelEditing() {
+    setState(() {
+      isEditing = false;
+      editingGuestId = null;
+      currentPhotoUrl = null;
+      _clearForm();
+    });
   }
 
   Future<void> saveGuestOnly() async {
@@ -152,10 +202,13 @@ class _GuestScreenState extends State<GuestScreen> {
 
     setState(() => saving = true);
 
-    final path = '$uid/guests/${DateTime.now().millisecondsSinceEpoch}.png';
     try {
-      /// Upload photo if exists
+      String? photoUrl;
+
+      /// Handle photo upload/update
       if (guestPhoto != null) {
+        // Upload new photo
+        final path = '$uid/guests/${DateTime.now().millisecondsSinceEpoch}.png';
         await supabase.storage
             .from('guest-photos')
             .uploadBinary(
@@ -163,18 +216,49 @@ class _GuestScreenState extends State<GuestScreen> {
               guestPhoto!,
               fileOptions: const FileOptions(upsert: true),
             );
+        photoUrl = supabase.storage.from('guest-photos').getPublicUrl(path);
+      } else if (isEditing && currentPhotoUrl != null) {
+        // Keep existing photo when editing
+        photoUrl = currentPhotoUrl;
       }
-      final photoUrl = supabase.storage.from('guest-photos').getPublicUrl(path);
 
-      /// Insert guest
-      await supabase.from('guests').insert({
-        'user_id': uid,
-        'guest_name': guestNameController.text,
-        'phone_number': guestPhoneController.text,
-        'guest_photo_url': photoUrl,
-        'created_at': DateTime.now().toIso8601String(),
-        'is_arrived': false,
-      });
+      if (isEditing && editingGuestId != null) {
+        /// Update existing guest
+        await supabase
+            .from('guests')
+            .update({
+              'guest_name': guestNameController.text,
+              'phone_number': guestPhoneController.text,
+              'guest_photo_url': photoUrl,
+              'updated_at': DateTime.now().toIso8601String(),
+            })
+            .eq('id', editingGuestId!)
+            .eq('user_id', uid);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Guest updated successfully!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        /// Insert new guest
+        await supabase.from('guests').insert({
+          'user_id': uid,
+          'guest_name': guestNameController.text,
+          'phone_number': guestPhoneController.text,
+          'guest_photo_url': photoUrl,
+          'created_at': DateTime.now().toIso8601String(),
+          'is_arrived': false,
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Guest added successfully!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
 
       // Refresh guest list
       setState(() {
@@ -184,12 +268,14 @@ class _GuestScreenState extends State<GuestScreen> {
       // Clear form
       _clearForm();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Guest added successfully!"),
-          backgroundColor: Colors.green,
-        ),
-      );
+      // Exit editing mode if we were editing
+      if (isEditing) {
+        setState(() {
+          isEditing = false;
+          editingGuestId = null;
+          currentPhotoUrl = null;
+        });
+      }
     } catch (e) {
       debugPrint("Guest save error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -200,6 +286,85 @@ class _GuestScreenState extends State<GuestScreen> {
       );
     } finally {
       setState(() => saving = false);
+    }
+  }
+
+  // Add method to delete a guest
+  Future<void> _deleteGuest(String guestId, String? photoUrl) async {
+    // Prevent multiple dialogs
+    if (isDeleteDialogOpen) return;
+
+    isDeleteDialogOpen = true;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Delete Guest"),
+        content: Text(
+          "Are you sure you want to delete this guest? This action cannot be undone.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text("Cancel", style: TextStyle(color: Colors.grey[600])),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text("Delete", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    isDeleteDialogOpen = false;
+
+    if (confirmed != true) return;
+
+    try {
+      // Delete guest from database
+      await supabase
+          .from('guests')
+          .delete()
+          .eq('id', guestId)
+          .eq('user_id', uid);
+
+      // Delete photo from storage if exists
+      if (photoUrl != null && photoUrl.isNotEmpty) {
+        try {
+          final fileName = photoUrl.split('/').last;
+          await supabase.storage.from('guest-photos').remove([
+            '$uid/guests/$fileName',
+          ]);
+        } catch (e) {
+          debugPrint("Error deleting photo: $e");
+          // Continue even if photo deletion fails
+        }
+      }
+
+      // Refresh guest list
+      setState(() {
+        guests = fetchGuests();
+      });
+
+      // If we were editing this guest, clear the form
+      if (editingGuestId == guestId) {
+        _cancelEditing();
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Guest deleted successfully!"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } catch (e) {
+      debugPrint("Delete error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error deleting guest: ${e.toString()}"),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -359,6 +524,89 @@ class _GuestScreenState extends State<GuestScreen> {
     );
   }
 
+  // Build the guest photo widget
+  Widget _buildGuestPhotoWidget() {
+    final hasPhoto = guestPhoto != null || currentPhotoUrl != null;
+
+    return GestureDetector(
+      onTap: pickGuestPhoto,
+      child: Row(
+        children: [
+          Stack(
+            children: [
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: const Color(0xFF7158E2).withOpacity(0.5),
+                backgroundImage: guestPhoto != null
+                    ? MemoryImage(guestPhoto!)
+                    : (currentPhotoUrl != null
+                          ? NetworkImage(currentPhotoUrl!)
+                          : null),
+                child: !hasPhoto
+                    ? const Icon(Icons.add, color: Colors.white, size: 24)
+                    : null,
+              ),
+              if (hasPhoto)
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        guestPhoto = null;
+                        currentPhotoUrl = null;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.close,
+                        size: 12,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                addText(isEditing ? "Update Photo" : "Add Photo", 15),
+                Text(
+                  isEditing
+                      ? "Tap to change or remove photo"
+                      : "Optional – helps identify guest",
+                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+                if (hasPhoto)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      isEditing && guestPhoto != null
+                          ? "New photo selected ✓"
+                          : "Photo selected ✓",
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.green[700],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -367,12 +615,16 @@ class _GuestScreenState extends State<GuestScreen> {
         backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            if (isEditing) {
+              _cancelEditing();
+            } else {
+              Navigator.pop(context);
+            }
           },
           icon: Icon(Icons.arrow_back_ios_rounded),
         ),
         title: Text(
-          "Guest List",
+          isEditing ? "Edit Guest" : "Guest List",
           style: GoogleFonts.cormorantGaramond(
             fontSize: 22,
             fontWeight: FontWeight.w600,
@@ -380,6 +632,14 @@ class _GuestScreenState extends State<GuestScreen> {
         ),
         centerTitle: true,
         actions: [
+          if (isEditing)
+            IconButton(
+              onPressed: editingGuestId != null
+                  ? () => _deleteGuest(editingGuestId!, currentPhotoUrl)
+                  : null,
+              icon: Icon(Icons.delete, color: Colors.red),
+              tooltip: "Delete Guest",
+            ),
           IconButton(
             onPressed: () {
               _showGuestSelectionDialog(context);
@@ -397,7 +657,7 @@ class _GuestScreenState extends State<GuestScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                // Add Guest Form
+                // Add/Edit Guest Form
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
@@ -407,14 +667,29 @@ class _GuestScreenState extends State<GuestScreen> {
                   ),
                   child: Column(
                     children: [
-                      addText("Add Guest", 18),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: addText(
-                          "You can clear the form and add as much guests you like",
-                          15,
+                      addText(isEditing ? "Edit Guest" : "Add Guest", 18),
+                      if (!isEditing)
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: addText(
+                            "You can clear the form and add as much guests you like",
+                            15,
+                          ),
                         ),
-                      ),
+                      if (isEditing)
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              "Update guest information and save changes",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ),
+                        ),
 
                       const SizedBox(height: 20),
 
@@ -433,111 +708,58 @@ class _GuestScreenState extends State<GuestScreen> {
 
                       const SizedBox(height: 20),
 
-                      GestureDetector(
-                        onTap: pickGuestPhoto,
-                        child: Row(
-                          children: [
-                            Stack(
-                              children: [
-                                CircleAvatar(
-                                  radius: 28,
-                                  backgroundColor: const Color(
-                                    0xFF7158E2,
-                                  ).withOpacity(0.5),
-                                  backgroundImage: guestPhoto != null
-                                      ? MemoryImage(guestPhoto!)
-                                      : null,
-                                  child: guestPhoto == null
-                                      ? const Icon(
-                                          Icons.add,
-                                          color: Colors.white,
-                                          size: 24,
-                                        )
-                                      : null,
-                                ),
-                                if (guestPhoto != null)
-                                  Positioned(
-                                    right: 0,
-                                    bottom: 0,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          guestPhoto = null;
-                                        });
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(2),
-                                        decoration: const BoxDecoration(
-                                          color: Colors.red,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.close,
-                                          size: 12,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  addText("Add Photo", 15),
-                                  const Text(
-                                    "Optional – helps identify guest",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  if (guestPhoto != null)
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 4),
-                                      child: Text(
-                                        "Photo selected ✓",
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.green[700],
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      _buildGuestPhotoWidget(),
 
                       const SizedBox(height: 30),
 
-                      CustomUploadingButton(
-                        text: "Save Guest",
-                        onPressed: () {
-                          saving ? null : _save();
-                        },
-                        isLoading: saving,
+                      Row(
+                        children: [
+                          if (isEditing)
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: ElevatedButton(
+                                  onPressed: _cancelEditing,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.grey[300],
+                                    foregroundColor: Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding: EdgeInsets.symmetric(vertical: 15),
+                                  ),
+                                  child: Text("Cancel"),
+                                ),
+                              ),
+                            ),
+                          Expanded(
+                            child: CustomUploadingButton(
+                              text: isEditing ? "Update Guest" : "Save Guest",
+                              onPressed: () {
+                                saving ? null : _save();
+                              },
+                              isLoading: saving,
+                            ),
+                          ),
+                        ],
                       ),
 
-                      const SizedBox(height: 12),
-
-                      TextButton(
-                        onPressed: () {
-                          saving ? null : _clearForm();
-                        },
-                        child: const Text(
-                          "Clear Form",
-                          style: TextStyle(
-                            color: Color(0xFF7158E2),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                      if (!isEditing) ...[
+                        const SizedBox(height: 12),
+                        TextButton(
+                          onPressed: () {
+                            saving ? null : _clearForm();
+                          },
+                          child: const Text(
+                            "Clear Form",
+                            style: TextStyle(
+                              color: Color(0xFF7158E2),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -617,6 +839,9 @@ class _GuestScreenState extends State<GuestScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: ListTile(
+                              onTap: () {
+                                _startEditingGuest(guest);
+                              },
                               leading: CircleAvatar(
                                 radius: 24,
                                 backgroundColor: isArrived
@@ -669,8 +894,11 @@ class _GuestScreenState extends State<GuestScreen> {
                                     ),
                                 ],
                               ),
-                              trailing: isArrived
-                                  ? Container(
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (isArrived)
+                                    Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 12,
                                         vertical: 6,
@@ -688,8 +916,15 @@ class _GuestScreenState extends State<GuestScreen> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    )
-                                  : null,
+                                    ),
+                                  SizedBox(width: 8),
+                                  Icon(
+                                    Icons.edit,
+                                    color: Color(0xFF7158E2),
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },

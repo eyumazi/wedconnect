@@ -14,6 +14,7 @@ import 'package:wedconnect/Reusable%20components/CustomUploadingButton.dart';
 import 'package:wedconnect/Util.dart' show openGoogleMaps;
 import 'package:wedconnect/screens/Form%20Screens/ProfileSetup.dart';
 import 'package:wedconnect/screens/main%20screens/GuestListScreen.dart';
+import 'package:wedconnect/screens/main%20screens/ThankYouScreen.dart';
 import 'package:wedconnect/screens/main%20screens/photoWallScreen.dart';
 import 'package:wedconnect/screens/main%20screens/signBoardScreen.dart';
 
@@ -42,12 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Uint8List? _mapImageBytes;
   int _selectedIndex = 0; // For bottom navigation bar
 
-  final List<Widget> _pages = [
+  late final List<Widget> _pages = [
     const SizedBox(),
     GuestScreen(),
     Signboardscreen(isHost: true, guestId: null),
     PhotoWallScreen(isHost: true, guestId: null), // Gallery
-    Placeholder(), // Thank You
+    ThankYouScreen(isHost: true), // Thank You
   ];
 
   void _onItemTapped(int index) {

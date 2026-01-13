@@ -31,19 +31,14 @@ class _QRScanScreenState extends State<QRScanScreen> {
   // Function to mark guest as arrived
   Future<void> _markGuestAsArrived(String guestId) async {
     try {
-      // Update the guest's is_arrived status and set arrival_time
-      await supabase
-          .from('guests')
-          .update({
-            'is_arrived': true,
-            'arrival_time': DateTime.now().toIso8601String(),
-          })
-          .eq('id', guestId);
+      await supabase.rpc(
+        'mark_guest_arrived_by_id',
+        params: {'guest_id_param': guestId},
+      );
 
-      print('Guest $guestId marked as arrived');
+      debugPrint('Guest $guestId marked as arrived');
     } catch (e) {
-      print('Error marking guest as arrived: $e');
-      // Don't throw error here - we still want to let the guest in
+      debugPrint('Error marking guest as arrived: $e');
     }
   }
 
@@ -70,7 +65,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
 
       if (qrJson != null && qrJson['type'] == 'guest_invitation') {
         // New QR format with guest info
-        guestId = qrJson['guest_id'] as String?;
+        guestId = qrJson['guest_id_param'] as String?;
         guestName = qrJson['guest_name'] as String?;
 
         if (guestId != null) {
@@ -84,7 +79,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
           if (guestResponse != null) {
             guestName = guestResponse['guest_name'] ?? 'Guest';
 
-            // MARK GUEST AS ARRIVED
+            // MARKS GUEST AS ARRIVED
             await _markGuestAsArrived(guestId);
 
             setState(() {

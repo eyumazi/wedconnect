@@ -94,6 +94,27 @@ class _QRCodeGeneratorScreenState extends State<QRCodeGeneratorScreen> {
     }
   }
 
+  // ===== Update invitation_sent status and related fields =====
+  Future<void> _updateInvitationSentStatus() async {
+    try {
+      // Update multiple fields when invitation is sent
+      await supabase
+          .from('guests')
+          .update({
+            'invitation_sent': true, // Mark as sent
+            'invitation_expiry': DateTime.now()
+                .add(const Duration(days: 30))
+                .toIso8601String(), // Set 30-day expiry
+            'guest_access': true, // Grant access to guest
+          })
+          .eq('id', widget.guestId);
+
+      debugPrint('Invitation sent status updated for guest: ${widget.guestId}');
+    } catch (e) {
+      debugPrint('Error updating invitation status: $e');
+    }
+  }
+
   // ===== Save to Gallery =====
   Future<void> _saveQRCodeToGallery() async {
     try {
@@ -109,9 +130,12 @@ class _QRCodeGeneratorScreenState extends State<QRCodeGeneratorScreen> {
 
       await file.writeAsBytes(bytes);
 
+      // ⭐ UPDATE THE DATABASE - Mark invitation as sent
+      await _updateInvitationSentStatus();
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('QR Code saved to Pictures/WedConnect'),
+          content: Text('QR Code saved and invitation marked as sent'),
           backgroundColor: Colors.green,
         ),
       );
@@ -140,8 +164,13 @@ class _QRCodeGeneratorScreenState extends State<QRCodeGeneratorScreen> {
             'Guest: ${widget.guestName}\n\n'
             'Scan the QR code to access wedding details.',
       );
+
+      // ⭐ UPDATE THE DATABASE - Mark invitation as sent
+      await _updateInvitationSentStatus();
+
+      _snack('Invitation shared successfully!', success: true);
     } catch (e) {
-      _snack('Error sharing QR Code');
+      _snack('Error sharing QR Code: $e');
     }
   }
 
@@ -149,7 +178,7 @@ class _QRCodeGeneratorScreenState extends State<QRCodeGeneratorScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: success ? Colors.green : null,
+        backgroundColor: success ? Colors.green : Colors.red,
       ),
     );
   }
