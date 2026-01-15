@@ -12,8 +12,9 @@ import 'package:wedconnect/Authentication/Wrapper.dart';
 import 'package:wedconnect/Reusable%20components/Button3.dart';
 import 'package:wedconnect/Reusable%20components/CustomUploadingButton.dart';
 import 'package:wedconnect/Util.dart' show openGoogleMaps;
-import 'package:wedconnect/screens/Form%20Screens/ProfileSetup.dart';
+import 'package:wedconnect/screens/Form%20Screens/WeddingInfoPreview.dart';
 import 'package:wedconnect/screens/main%20screens/GuestListScreen.dart';
+import 'package:wedconnect/screens/main%20screens/ProfileManagementScreen.dart';
 import 'package:wedconnect/screens/main%20screens/ThankYouScreen.dart';
 import 'package:wedconnect/screens/main%20screens/photoWallScreen.dart';
 import 'package:wedconnect/screens/main%20screens/signBoardScreen.dart';
@@ -32,7 +33,7 @@ Future<void> signout() async {
   Get.offAll(() => const Wrapper());
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final user = FirebaseAuth.instance.currentUser;
   final supabase = Supabase.instance.client;
   final uid = FirebaseAuth.instance.currentUser!.uid;
@@ -42,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String errorMessage = '';
   Uint8List? _mapImageBytes;
   int _selectedIndex = 0; // For bottom navigation bar
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late final List<Widget> _pages = [
     const SizedBox(),
@@ -60,7 +62,24 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadUserData();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    // Refresh data when app returns to foreground
+    if (state == AppLifecycleState.resumed) {
+      _loadUserData();
+    }
   }
 
   Future<void> _loadUserData() async {
@@ -73,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Load user profile first
       final profileResponse = await supabase
           .from('profiles')
-          .select('id')
+          .select('id, role, profile_image')
           .eq('id', uid)
           .maybeSingle();
 
@@ -81,7 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
         userProfile = profileResponse;
       });
 
-      // Only load wedding data if profile exists
       if (userProfile != null) {
         // Fetches wedding data for the current user
         final response = await supabase
@@ -116,8 +134,24 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _navigateToProfileSetup() {
-    Get.to(() => ProfileSetupScreen());
+  void _navigateToProfileSetup() async {
+    // Get the result from profile management screen
+    final result = await Get.to<bool>(
+      () => ProfileManagementScreen(
+        userProfile: userProfile,
+        weddingData: weddingData.isNotEmpty ? weddingData[0] : null,
+      ),
+    );
+
+    _scaffoldKey.currentState?.closeDrawer();
+
+    // If profile was updated, refresh the data
+    if (result == true) {
+      await _loadUserData();
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
@@ -129,18 +163,13 @@ class _HomeScreenState extends State<HomeScreen> {
     final bool hasWeddingData = weddingData.isNotEmpty;
 
     return Scaffold(
+      key: _scaffoldKey,
       extendBodyBehindAppBar:
           _selectedIndex == 0 && hasProfile && hasWeddingData,
+      drawer: hasProfile && hasWeddingData ? _buildSidebar() : null,
       body: _selectedIndex == 0
           ? _buildHomeContent(screenHeight, hasProfile, hasWeddingData)
           : _pages[_selectedIndex],
-      floatingActionButton: _selectedIndex == 0 && hasProfile && hasWeddingData
-          ? FloatingActionButton(
-              onPressed: signout,
-              backgroundColor: Colors.white,
-              child: const Icon(Icons.logout, color: Colors.black),
-            )
-          : null,
       bottomNavigationBar: hasProfile && hasWeddingData
           ? SafeArea(
               child: Material(
@@ -152,6 +181,122 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             )
           : null,
+    );
+  }
+
+  Widget _buildSidebar() {
+    final profileImage = userProfile?['profile_image'];
+    final role = userProfile?['role'] ?? '';
+    final weddingName = weddingData.isNotEmpty
+        ? weddingData[0]['wedding_name'] ?? 'My Wedding'
+        : 'My Wedding';
+
+    return Drawer(
+      backgroundColor: Color(0xFFFFF0F5),
+      child: Column(
+        children: [
+          // Header
+          Container(
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFFF8FAF).withOpacity(0.8),
+                  Color(0xFFC19AC7).withOpacity(0.8),
+                ],
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage:
+                      profileImage != null && profileImage.isNotEmpty
+                      ? NetworkImage(profileImage) as ImageProvider
+                      : AssetImage("assets/placeholder_profile.png"),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  role == 'groom' ? 'The Groom' : 'The Bride',
+                  style: GoogleFonts.cormorantGaramond(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  weddingName,
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                // Profile Management Section
+                _buildMenuItem(
+                  icon: Icons.person,
+                  title: 'Manage Profile',
+                  onTap: _navigateToProfileSetup,
+                ),
+                _buildMenuItem(
+                  icon: Icons.celebration,
+                  title: 'Wedding Details',
+                  onTap: () {
+                    Get.to(() => WeddingPreviewScreen());
+                    _scaffoldKey.currentState?.closeDrawer();
+                  },
+                ),
+
+                Divider(height: 20, thickness: 1),
+
+                // Logout Section
+                _buildMenuItem(
+                  icon: Icons.logout,
+                  title: 'Logout',
+                  color: Colors.red,
+                  onTap: () {
+                    _scaffoldKey.currentState?.closeDrawer();
+                    signout();
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    Color color = const Color(0xFFC19AC7),
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: color),
+      title: Text(
+        title,
+        style: GoogleFonts.inter(color: color, fontWeight: FontWeight.w500),
+      ),
+      onTap: onTap,
+      tileColor: Colors.transparent,
+      hoverColor: Colors.pink.withOpacity(0.1),
     );
   }
 
@@ -183,7 +328,33 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     // Normal flow - user has both profile and wedding data
-    return _buildWeddingContent(screenHeight);
+    return Stack(
+      children: [
+        _buildWeddingContent(screenHeight),
+        // Menu button
+        Positioned(
+          top: 50,
+          left: 20,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(Icons.menu, color: Color(0xFFC19AC7)),
+              onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildProfileSetupPrompt({
@@ -516,14 +687,30 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  CustomElevatedButton3(text: "Sign Board", onPressed: () {}),
-                  CustomElevatedButton3(text: "Photo Wall", onPressed: () {}),
+                  CustomElevatedButton3(
+                    text: "Sign Board",
+                    onPressed: () {
+                      setState(() {
+                        _selectedIndex = 2;
+                      });
+                    },
+                  ),
+                  CustomElevatedButton3(
+                    text: "Photo Wall",
+                    onPressed: () {
+                      setState(() {
+                        _selectedIndex = 3;
+                      });
+                    },
+                  ),
                 ],
               ),
               SizedBox(height: 25),
               CustomElevatedButton3(
                 text: "Manage Profile",
-                onPressed: _navigateToProfileSetup,
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
               ),
             ],
           ),
@@ -679,7 +866,6 @@ class LuxuryBottomNav extends StatelessWidget {
     );
   }
 
-  /// TEMP icons – you will replace these later
   Widget _placeholderIcon(int index) {
     switch (index) {
       case 0:

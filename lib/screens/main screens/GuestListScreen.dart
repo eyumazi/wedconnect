@@ -764,12 +764,45 @@ class _GuestScreenState extends State<GuestScreen> {
                   ),
                 ),
 
-                SizedBox(height: 50),
+                SizedBox(height: 30),
 
+                ElevatedButton(
+                  onPressed: () {
+                    _showGuestSelectionDialog(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black, // luxury black
+                    foregroundColor: Colors.white, // text color
+                    elevation: 6,
+                    shadowColor: Colors.black.withOpacity(0.5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 28,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        30,
+                      ), // soft luxury curve
+                      side: const BorderSide(
+                        color: Colors.white, // white border for elegance
+                        width: 1.2,
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    'VIEW QR CODE',
+                    style: TextStyle(
+                      fontSize: 14,
+                      letterSpacing: 1.8, // premium feel
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
                 // Search Bar
                 _buildSearchBar(),
 
-                SizedBox(height: 16),
+                SizedBox(height: 25),
 
                 // Filter Chips
                 _buildFilterChips(),

@@ -262,135 +262,145 @@ class _PhotoWallScreenState extends State<PhotoWallScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Memory Image
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  height: 300,
-                  width: double.infinity,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      height: 300,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                              : null,
+          // Memory Image Container with fixed height
+          Container(
+            height: 180, // Fixed height for grid items
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.grey[200],
+            ),
+            child: Stack(
+              children: [
+                // Image with BoxFit.cover
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 300,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.broken_image,
-                          size: 60,
-                          color: Colors.grey[400],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-              // Delete button (ONLY for memory owners)
-              if (!widget.isHost && isOwner)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: GestureDetector(
-                    onTap: () => _deleteMemory(memory['id']),
-                    child: Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                : null,
                           ),
-                        ],
-                      ),
-                      child: Icon(Icons.delete, size: 20, color: Colors.white),
-                    ),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            size: 40,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
 
-              // Guest name overlay
-              if (guestName.isNotEmpty)
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [
-                          Colors.black.withOpacity(0.7),
-                          Colors.transparent,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(12),
-                        bottomRight: Radius.circular(12),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 14,
-                          backgroundImage:
-                              memory['guests']['guest_photo_url'] != null
-                              ? NetworkImage(
-                                  memory['guests']['guest_photo_url'],
-                                )
-                              : null,
-                          child: memory['guests']['guest_photo_url'] == null
-                              ? Icon(
-                                  Icons.person,
-                                  size: 14,
-                                  color: Colors.white,
-                                )
-                              : null,
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            guestName,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                // Delete button (ONLY for memory owners)
+                if (!widget.isHost && isOwner)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: GestureDetector(
+                      onTap: () => _deleteMemory(memory['id']),
+                      child: Container(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          ],
                         ),
-                      ],
+                        child: Icon(
+                          Icons.delete,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-            ],
+
+                // Guest name overlay
+                if (guestName.isNotEmpty)
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.7),
+                            Colors.transparent,
+                          ],
+                        ),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 14,
+                            backgroundImage:
+                                memory['guests']['guest_photo_url'] != null
+                                ? NetworkImage(
+                                    memory['guests']['guest_photo_url'],
+                                  )
+                                : null,
+                            child: memory['guests']['guest_photo_url'] == null
+                                ? Icon(
+                                    Icons.person,
+                                    size: 14,
+                                    color: Colors.white,
+                                  )
+                                : null,
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              guestName,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
 
           // Caption (if exists)
@@ -414,9 +424,6 @@ class _PhotoWallScreenState extends State<PhotoWallScreen> {
     final guestName = memory['guests']['guest_name'] ?? 'Guest';
     final imageUrl = memory['image_url'];
     final caption = memory['caption'];
-
-    // Try to get image dimensions or use a default aspect ratio
-    final double aspectRatio = 1.5; // Default for landscape/portrait mix
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -476,15 +483,20 @@ class _PhotoWallScreenState extends State<PhotoWallScreen> {
             ),
           ),
 
-          // Memory Image - takes full width with flexible height
-          AspectRatio(
-            aspectRatio: aspectRatio,
+          // Memory Image Container with fixed height
+          Container(
+            height: 250, // Fixed height for list items
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.grey[200],
+            ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
                 imageUrl,
                 fit: BoxFit.cover,
                 width: double.infinity,
+                height: double.infinity,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Center(child: CircularProgressIndicator());
@@ -722,7 +734,8 @@ class _PhotoWallScreenState extends State<PhotoWallScreen> {
                                 crossAxisCount: 2,
                                 crossAxisSpacing: 8,
                                 mainAxisSpacing: 8,
-                                childAspectRatio: 0.8,
+                                childAspectRatio:
+                                    0.7, // Adjusted from 0.8 to 0.7
                               ),
                           itemCount: memories.length,
                           itemBuilder: (context, index) {
