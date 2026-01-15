@@ -12,6 +12,7 @@ import 'package:wedconnect/Authentication/Wrapper.dart';
 import 'package:wedconnect/Reusable%20components/Button3.dart';
 import 'package:wedconnect/Reusable%20components/CustomUploadingButton.dart';
 import 'package:wedconnect/Util.dart' show openGoogleMaps;
+import 'package:wedconnect/screens/Form%20Screens/ProfileSetup.dart';
 import 'package:wedconnect/screens/Form%20Screens/WeddingInfoPreview.dart';
 import 'package:wedconnect/screens/main%20screens/GuestListScreen.dart';
 import 'package:wedconnect/screens/main%20screens/ProfileManagementScreen.dart';
@@ -131,6 +132,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+  void _SettingUpProfile() async {
+    // Get the result from profile management screen
+    final result = await Get.to<bool>(() => ProfileSetupScreen());
+
+    _scaffoldKey.currentState?.closeDrawer();
+
+    // If profile was updated, refresh the data
+    if (result == true) {
+      await _loadUserData();
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -459,8 +475,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 width: double.infinity,
                 child: CustomUploadingButton(
                   text: buttonText,
-                  onPressed: _navigateToProfileSetup,
                   isLoading: false,
+                  onPressed: () {
+                    _SettingUpProfile();
+                  },
                 ),
               ),
 

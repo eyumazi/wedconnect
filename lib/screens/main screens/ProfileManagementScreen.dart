@@ -266,12 +266,6 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
       });
     } catch (e) {
       print('Error searching venues: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to search venues. Please try again.',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
     }
   }
 
@@ -326,6 +320,9 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
       // Upload profile image if new one was selected
       String? finalImageUrl = await _uploadProfileImage();
 
+      // Upload cover image if new one was selected
+      String? finalCoverImageUrl = await _uploadCoverImage();
+
       // Update profile
       await supabase
           .from('profiles')
@@ -351,6 +348,8 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
               'venue_map_image': _mapImageBytes != null
                   ? base64Encode(_mapImageBytes!)
                   : null,
+              'cover_image_url':
+                  finalCoverImageUrl ?? _coverImageUrl, // Save cover image URL
               'updated_at': DateTime.now().toIso8601String(),
             })
             .eq('id', widget.weddingData!['id']);
@@ -363,7 +362,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
         colorText: Colors.white,
       );
 
-      // Navigate back and trigger refresh
+      // Navigate back and trigger refresh by returning true
       Get.back(result: true);
     } catch (e) {
       Get.snackbar(
@@ -372,6 +371,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+      Get.back(result: false);
     } finally {
       setState(() {
         _isLoading = false;
@@ -463,7 +463,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.save),
-            onPressed: _saveProfile,
+            onPressed: _isLoading ? null : _saveProfile,
             tooltip: 'Save Changes',
           ),
         ],
@@ -838,7 +838,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
                   Container(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _saveProfile,
+                      onPressed: _isLoading ? null : _saveProfile,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFC19AC7),
                         padding: EdgeInsets.symmetric(vertical: 16),
