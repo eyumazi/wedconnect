@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
         snackBarTheme: SnackBarThemeData(
           contentTextStyle: GoogleFonts.cormorantGaramond(
             fontSize: 15,
-            fontWeight: FontWeight.w600, // bolder & clearer
+            fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
         ),
