@@ -41,17 +41,15 @@ class _LoginState extends State<Login> {
       final user = FirebaseAuth.instance.currentUser;
 
       if (user != null) {
-        // Initialize Supabase
         final supabase = Supabase.instance.client;
         final String userId = user.uid;
 
-        // Check if user exists in profiles table
         try {
           final response = await supabase
               .from('profiles')
               .select('id')
               .eq('id', userId)
-              .maybeSingle(); // Use maybeSingle instead of single
+              .maybeSingle();
 
           if (response != null && response['id'] != null) {
             Get.offAll(() => HomeScreen());
@@ -77,7 +75,6 @@ class _LoginState extends State<Login> {
             );
           }
         } catch (e) {
-          // If there's an error querying, assume new user
           print('Error checking profile: $e');
           Get.offAll(() => ProfileSetupScreen());
 

@@ -87,7 +87,6 @@ class _SignupState extends State<Signup> {
     }
   }
 
-  // ---------------- GOOGLE SIGN IN ----------------
   Future<void> signUpWithGoogle() async {
     setState(() => _isLoading = true);
 

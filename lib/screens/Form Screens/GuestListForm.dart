@@ -8,7 +8,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wedconnect/Reusable%20components/Button2.dart';
 import 'package:wedconnect/Reusable%20components/CustomUploadingButton.dart';
 import 'package:wedconnect/Util.dart' show pickImage;
-import 'package:wedconnect/screens/Form%20Screens/GuestListPreviewScreen.dart';
 
 class Guestlistform extends StatefulWidget {
   const Guestlistform({super.key});
@@ -108,10 +107,6 @@ class _GuestlistformState extends State<Guestlistform> {
         'guest_photo_url': photoUrl,
         'created_at': DateTime.now().toIso8601String(),
       });
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const GuestPreviewScreen()),
-      );
     } catch (e) {
       debugPrint("Guest save error: $e");
       ScaffoldMessenger.of(context).showSnackBar(

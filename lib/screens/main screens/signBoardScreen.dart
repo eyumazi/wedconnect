@@ -48,7 +48,7 @@ class _SignboardscreenState extends State<Signboardscreen> {
     try {
       final response = await supabase
           .from('profiles')
-          .select('id, full_name, avatar_url')
+          .select('id, avatar_url')
           .eq('id', _hostUserId!)
           .single();
       return response;
@@ -150,7 +150,7 @@ class _SignboardscreenState extends State<Signboardscreen> {
     BuildContext context, {
     String? wishId,
     String? initialMessage,
-    String? existingImageUrl, // Add this parameter
+    String? existingImageUrl,
   }) {
     if (widget.isHost) {
       // Hosts cannot add wishes
@@ -171,7 +171,7 @@ class _SignboardscreenState extends State<Signboardscreen> {
         guestId: widget.guestId!,
         isEditing: wishId != null,
         initialMessage: initialMessage,
-        existingImageUrl: existingImageUrl, // Pass existing image URL
+        existingImageUrl: existingImageUrl,
         editingWishId: wishId, // Pass the wish ID for editing
         onWishSubmitted: () {
           // Refresh wishes when form is closed
@@ -663,10 +663,8 @@ class _WishFormOverlayState extends State<_WishFormOverlay> {
           );
           updateData['image_url'] = imageUrl!;
         } else if (_existingImageUrl != null && _wishPostImage == null) {
-          // Keep existing image
           updateData['image_url'] = _existingImageUrl!;
         } else if (existingWish != null && existingWish['image_url'] != null) {
-          // Keep existing image from database
           updateData['image_url'] = existingWish['image_url'];
         }
         // Update the wish in database

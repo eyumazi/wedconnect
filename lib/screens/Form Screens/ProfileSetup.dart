@@ -89,8 +89,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         ),
       ),
       child: Scaffold(
-        backgroundColor:
-            Colors.transparent, // Make Scaffold background transparent
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: Text(
             "Setup your profile",
@@ -100,9 +99,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               color: Colors.white,
             ),
           ),
-          backgroundColor:
-              Colors.transparent, // Optional: make appbar transparent too
-          elevation: 0, // Remove shadow
+          backgroundColor: Colors.transparent,
+          elevation: 0,
           centerTitle: true,
         ),
         body: Stack(
@@ -153,7 +151,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SizedBox(
-                                //Choice for the groom
                                 width: 170,
                                 height: 150,
                                 child: Stack(

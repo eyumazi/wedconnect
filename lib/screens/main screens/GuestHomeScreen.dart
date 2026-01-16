@@ -12,11 +12,11 @@ import 'package:wedconnect/Reusable%20components/CustomUploadingButton.dart';
 import 'package:wedconnect/Util.dart' show openGoogleMaps;
 import 'package:wedconnect/screens/main%20screens/ThankYouScreen.dart';
 import 'package:wedconnect/screens/main%20screens/photoWallScreen.dart';
-import 'package:wedconnect/screens/main%20screens/signBoardScreen.dart'; // Import Signboardscreen
+import 'package:wedconnect/screens/main%20screens/signBoardScreen.dart';
 
 class GuestHomeScreen extends StatefulWidget {
-  final String? guestToken; // Optional: Pass guest token if needed
-  final String? guestId; // Add this parameter
+  final String? guestToken;
+  final String? guestId;
 
   const GuestHomeScreen({super.key, this.guestToken, this.guestId});
 
@@ -25,7 +25,6 @@ class GuestHomeScreen extends StatefulWidget {
 }
 
 Future<void> guestSignout() async {
-  // For guest, just go back to login/wrapper
   Get.offAll(() => const Wrapper());
 }
 
@@ -35,19 +34,18 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
   bool isLoading = true;
   String errorMessage = '';
   Uint8List? _mapImageBytes;
-  int _selectedIndex = 0; // For bottom navigation bar
+  int _selectedIndex = 0;
   String? guestName;
   String? guestToken;
-  String? _guestId; // Store guest ID
+  String? _guestId;
 
-  // Bottom navigation bar items - REMOVED Guest List
   late List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
     guestToken = widget.guestToken;
-    _guestId = widget.guestId; // Use passed guestId if available
+    _guestId = widget.guestId;
 
     if (_guestId != null) {
       _loadGuestInfo();
@@ -147,8 +145,6 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
         errorMessage = '';
       });
 
-      // Try to load the first wedding in the database
-      // In a real app, you might want to filter by wedding ID or organization
       final response = await supabase
           .from('weddings')
           .select()
@@ -183,7 +179,6 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
-    // Check if we have wedding data
     final bool hasWeddingData = weddingData.isNotEmpty;
 
     return Scaffold(
@@ -216,13 +211,10 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-
-    // If no wedding data found
     if (!hasWeddingData) {
       return _buildWelcomeScreen();
     }
 
-    // Normal flow - wedding data available
     return _buildWeddingContent(screenHeight);
   }
 
@@ -267,7 +259,6 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
 
               SizedBox(height: 20),
 
-              // Subtitle
               Text(
                 guestName != null
                     ? 'Thank you for joining us on this special day'
@@ -655,7 +646,6 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
     );
   }
 
-  // Helper widget that creates the Venue section
   Widget venueCard({
     required String venueName,
     required double lat,
@@ -689,10 +679,8 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
 
             const SizedBox(height: 6),
 
-            /// ADDRESS
             const SizedBox(height: 16),
 
-            /// MAP PREVIEW (FREE)
             if (_mapImageBytes != null)
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),

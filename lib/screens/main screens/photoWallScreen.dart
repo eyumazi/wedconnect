@@ -49,7 +49,7 @@ class _PhotoWallScreenState extends State<PhotoWallScreen> {
     try {
       final response = await supabase
           .from('profiles')
-          .select('id, full_name, avatar_url')
+          .select('id, avatar_url')
           .eq('id', _hostUserId!)
           .single();
       return response;
@@ -262,16 +262,14 @@ class _PhotoWallScreenState extends State<PhotoWallScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Memory Image Container with fixed height
           Container(
-            height: 180, // Fixed height for grid items
+            height: 180,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: Colors.grey[200],
             ),
             child: Stack(
               children: [
-                // Image with BoxFit.cover
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.network(
@@ -403,7 +401,6 @@ class _PhotoWallScreenState extends State<PhotoWallScreen> {
             ),
           ),
 
-          // Caption (if exists)
           if (caption != null && caption.isNotEmpty)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
@@ -485,7 +482,7 @@ class _PhotoWallScreenState extends State<PhotoWallScreen> {
 
           // Memory Image Container with fixed height
           Container(
-            height: 250, // Fixed height for list items
+            height: 250,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: Colors.grey[200],
@@ -555,8 +552,7 @@ class _PhotoWallScreenState extends State<PhotoWallScreen> {
           builder: (context, snapshot) {
             final data = snapshot.data;
             if (data != null) {
-              final userName =
-                  data['full_name'] ?? data['guest_name'] ?? 'User';
+              final userName = data['guest_name'] ?? 'User';
               return Text(
                 widget.isHost ? "Photo Wall" : "Welcome, $userName!",
                 style: GoogleFonts.cormorantGaramond(

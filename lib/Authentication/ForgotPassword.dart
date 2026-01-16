@@ -34,18 +34,11 @@ class _ForgotpasswordState extends State<Forgotpassword> {
         email: emailController.text.trim(),
       );
 
-      // Show success message
       showSnackBar('Password reset link has been sent to your email');
 
-      // Clear the email field
       emailController.clear();
 
-      // Navigate to Wrapper after a short delay
       Future.delayed(Duration(seconds: 2), () {
-        // Option 1: Using GetX (if you have GetMaterialApp)
-        // Get.offAll(() => Wrapper());
-
-        // Option 2: Using Navigator (built-in)
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => Login()),
@@ -155,7 +148,6 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                 onPressed: _isLoading
                     ? null
                     : () {
-                        // Navigate back to login/signup screen
                         Navigator.pop(context);
                       },
                 child: Text("Back to Login", style: TextStyle(fontSize: 16)),

@@ -26,7 +26,7 @@ class _WeddingInfoState extends State<WeddingInfo> {
   List<dynamic> venueSuggestions = [];
   double? venueLat;
   double? venueLng;
-  Uint8List? _mapImageBytes; // Changed from String to Uint8List
+  Uint8List? _mapImageBytes;
 
   final supabase = Supabase.instance.client;
   final uid = FirebaseAuth.instance.currentUser!.uid;

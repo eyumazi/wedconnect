@@ -56,9 +56,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
       Map<String, dynamic>? qrJson;
       try {
         qrJson = json.decode(qrData);
-      } catch (_) {
-        // Not JSON, treat as old format
-      }
+      } catch (_) {}
 
       String? guestId;
       String? guestName;
@@ -100,7 +98,6 @@ class _QRScanScreenState extends State<QRScanScreen> {
         }
       }
 
-      // Fallback: Check if it's a valid guest QR code (old format - invitation_token)
       final guestResponse = await supabase
           .from('guests')
           .select()
@@ -122,15 +119,12 @@ class _QRScanScreenState extends State<QRScanScreen> {
         await Future.delayed(Duration(seconds: 1));
 
         if (mounted) {
-          // Navigate to GuestHomeScreen WITH guestId
           Get.offAll(
             () => GuestHomeScreen(guestToken: qrData, guestId: guestId),
           );
         }
         return;
       }
-
-      // If not a guest invitation QR, check if it's an arrival QR (for separate arrival scanning)
       try {
         final response = await supabase.rpc(
           'mark_guest_arrived',

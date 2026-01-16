@@ -203,7 +203,7 @@ class _ThankYouScreenState extends State<ThankYouScreen> {
   }
 
   void _startEditing() {
-    if (!widget.isHost) return; // Safety check - only hosts can edit
+    if (!widget.isHost) return;
     setState(() {
       _isEditing = true;
     });
