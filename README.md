@@ -1,4 +1,3 @@
-````md
 # 💍 WedConnect
 
 <p align="center">
@@ -30,38 +29,30 @@ This project showcases:
 ## ✨ Features
 
 ### 🔐 Authentication
-```dart
-✔ Email & Password Sign-Up / Login
-✔ Google Sign-In (Firebase)
-✔ Secure session handling
-````
+- ✔ Email & Password Sign-Up / Login
+- ✔ Google Sign-In (Firebase)
+- ✔ Secure session handling
 
 ### 🎯 Onboarding Experience
-
-```dart
-✔ Smooth animated transitions
-✔ Minimal and intuitive UI
-✔ User-friendly navigation
-```
+- ✔ Smooth animated transitions
+- ✔ Minimal and intuitive UI
+- ✔ User-friendly navigation
 
 ### ⚡ Performance & Architecture
-
-```dart
-✔ Built with Flutter for cross-platform performance
-✔ GetX for lightweight state management
-✔ Modular and scalable structure
-```
+- ✔ Built with Flutter for cross-platform performance
+- ✔ GetX for lightweight state management
+- ✔ Modular and scalable structure
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Category         | Technology     |
-| ---------------- | -------------- |
-| Framework        | Flutter (Dart) |
-| Backend/Auth     | Firebase       |
-| State Management | GetX           |
-| Authentication   | Google Sign-In |
+| Category | Technology |
+|----------|------------|
+| Framework | Flutter (Dart) |
+| Backend/Auth | Firebase |
+| State Management | GetX |
+| Authentication | Google Sign-In |
 
 ---
 
@@ -69,141 +60,18 @@ This project showcases:
 
 ```bash
 lib/
-│── Authentication/
+├── Authentication/
 │   ├── Signup.dart
 │   ├── Login.dart
-│   ├── Wrapper.dart
-│
-│── Screens/
+│   └── Wrapper.dart
+├── Screens/
 │   ├── OnboardingPage.dart
-│   ├── HomePage.dart
-│
-│── Widgets/
-│   ├── CustomElevatedButton.dart
-│
-│── main.dart
-```
+│   └── HomePage.dart
+├── Widgets/
+│   └── CustomElevatedButton.dart
+└── main.dart
 
----
-
-## ⚙️ Getting Started
-
-### 🔹 Prerequisites
-
-```bash
+## Prerequisites 
 Flutter SDK installed
 Android Studio / VS Code
 Firebase project configured
-```
-
----
-
-### 🔹 Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/wedconnect.git
-
-# Navigate into the project
-cd wedconnect
-
-# Install dependencies
-flutter pub get
-
-# Run the app
-flutter run
-```
-
----
-
-## 🔥 Firebase Configuration
-
-```bash
-1. Create Firebase project
-2. Enable Authentication → Google Sign-In
-3. Add Android app (same package name)
-4. Add SHA-1 & SHA-256
-5. Download google-services.json
-```
-
-📂 Place the file here:
-
-```bash
-android/app/google-services.json
-```
-
----
-
-## 🎨 UI Philosophy
-
-```dart
-✔ Clean and minimal design
-✔ Smooth, luxurious animations
-✔ Consistent spacing and typography
-✔ Focus on user experience
-```
-
----
-
-## 📸 Screenshots
-
-```md
-# Add screenshots here
-![Home](assets/screenshots/home.png)
-![Onboarding](assets/screenshots/onboarding.png)
-```
-
----
-
-## 📈 Future Improvements
-
-```dart
-✔ User profile system
-✔ Chat/messaging feature
-✔ Backend database integration (Firestore)
-✔ Push notifications
-✔ Dark mode support
-```
-
----
-
-## 🤝 Contributing
-
-```bash
-# Fork the repository
-# Create a new branch
-git checkout -b feature/your-feature-name
-
-# Commit your changes
-git commit -m "Add new feature"
-
-# Push to GitHub
-git push origin feature/your-feature-name
-```
-
----
-
-## 📄 License
-
-```text
-This project is licensed under the MIT License.
-```
-
----
-
-## 👨‍💻 Author
-
-**Eyuel Mazengia Gedlie**
-
-```bash
-Full-Stack Developer | Flutter | React | Next.js
-```
-
-<p align="center">
-  <i>Building scalable and user-focused applications</i>
-</p>
-
----
-
-```
-```
