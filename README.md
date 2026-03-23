@@ -56,6 +56,25 @@ This project showcases:
 
 ---
 
+## Prerequisites 
+Flutter SDK installed
+Android Studio / VS Code
+Firebase project configured
+
+Installation
+
+# Clone the repository
+git clone https://github.com/your-username/wedconnect.git
+
+# Navigate into the project
+cd wedconnect
+
+# Install dependencies
+flutter pub get
+
+# Run the app
+flutter run
+
 ## 📂 Project Structure
 
 ```bash
@@ -71,7 +90,3 @@ lib/
 │   └── CustomElevatedButton.dart
 └── main.dart
 
-## Prerequisites 
-Flutter SDK installed
-Android Studio / VS Code
-Firebase project configured
