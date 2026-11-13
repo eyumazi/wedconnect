@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -116,21 +116,17 @@ class _ThankYouScreenState extends State<ThankYouScreen> {
             .eq('id', targetWeddingId)
             .single();
 
-        if (weddingResponse != null) {
-          setState(() {
-            _coverUrl = weddingResponse['cover_image_url'] as String?;
-            _weddingName = weddingResponse['wedding_name'] as String?;
-            _coupleNames = weddingResponse['couple_names'] as String?;
+        setState(() {
+          _coverUrl = weddingResponse['cover_image_url'] as String?;
+          _weddingName = weddingResponse['wedding_name'] as String?;
+          _coupleNames = weddingResponse['couple_names'] as String?;
 
-            final existingText = weddingResponse['thank_you_text'] as String?;
-            _thankYouText =
-                existingText ??
-                'Thank you for celebrating with us on our special day! Your presence and warm wishes mean the world to us.';
-            _thankYouController.text = _thankYouText;
-          });
-        } else {
-          _setDefaultValues();
-        }
+          final existingText = weddingResponse['thank_you_text'] as String?;
+          _thankYouText =
+              existingText ??
+              'Thank you for celebrating with us on our special day! Your presence and warm wishes mean the world to us.';
+          _thankYouController.text = _thankYouText;
+        });
       } else {
         // Guest not linked to any wedding
         _setDefaultValues();
@@ -238,7 +234,7 @@ class _ThankYouScreenState extends State<ThankYouScreen> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               blurRadius: 20,
               spreadRadius: 5,
             ),
@@ -359,7 +355,7 @@ class _ThankYouScreenState extends State<ThankYouScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     elevation: 2,
-                    shadowColor: Colors.grey.withOpacity(0.3),
+                    shadowColor: Colors.grey.withValues(alpha: 0.3),
                   ),
                   icon: const Icon(Icons.edit, size: 20),
                   label: Text(

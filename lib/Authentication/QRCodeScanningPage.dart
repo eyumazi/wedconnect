@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -138,7 +138,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
           statusMessage = result['message'] ?? 'Processing complete';
 
           if (result['guest_name'] != null) {
-            statusMessage = '${result['guest_name']} - ${statusMessage}';
+            statusMessage = '${result['guest_name']} - $statusMessage';
           }
         });
 
@@ -256,7 +256,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
           if (scannedResult != null && statusMessage != null)
             Positioned.fill(
               child: Container(
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withValues(alpha: 0.7),
                 child: Center(
                   child: Container(
                     width: 300,
@@ -287,11 +287,11 @@ class _QRScanScreenState extends State<QRScanScreen> {
                         if (!isSuccess)
                           ElevatedButton(
                             onPressed: resetScanner,
-                            child: Text('Scan Again'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.black,
                             ),
+                            child: Text('Scan Again'),
                           ),
                         if (isSuccess)
                           ElevatedButton(
@@ -303,11 +303,11 @@ class _QRScanScreenState extends State<QRScanScreen> {
                                 Get.offAll(() => GuestHomeScreen());
                               }
                             },
-                            child: Text('Continue'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.black,
                             ),
+                            child: Text('Continue'),
                           ),
                       ],
                     ),
@@ -321,7 +321,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
               (statusMessage == null || statusMessage == 'Processing...'))
             Positioned.fill(
               child: Container(
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withValues(alpha: 0.7),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -354,7 +354,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
                   Text(
                     'Position QR code within the frame',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                     ),
                   ),

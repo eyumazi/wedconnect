@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 
 import 'wrapper.dart'; // 👈 import your Wrapper
@@ -40,7 +40,7 @@ class _EmailVerificationState extends State<EmailVerification> {
         "Email not verified",
         "Please verify your email before continuing.",
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange.withOpacity(0.8),
+        backgroundColor: Colors.orange.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }

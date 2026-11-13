@@ -2,7 +2,7 @@ import 'dart:convert' show base64Decode;
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -164,7 +164,7 @@ class _WeddingPreviewScreenState extends State<WeddingPreviewScreen> {
                 "All the information you've provided",
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
               SizedBox(height: 30),
@@ -186,7 +186,7 @@ class _WeddingPreviewScreenState extends State<WeddingPreviewScreen> {
                 Container(
                   padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -219,7 +219,7 @@ class _WeddingPreviewScreenState extends State<WeddingPreviewScreen> {
                         horizontal: 16,
                       ),
                       decoration: BoxDecoration(
-                        color: Color(0xFFFE96AF).withOpacity(0.9),
+                        color: Color(0xFFFE96AF).withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Column(
@@ -301,11 +301,11 @@ class _WeddingPreviewScreenState extends State<WeddingPreviewScreen> {
                           SizedBox(height: 12),
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                               borderRadius: BorderRadius.circular(14),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
+                                  color: Colors.black.withValues(alpha: 0.2),
                                   blurRadius: 8,
                                   offset: Offset(0, 4),
                                 ),
@@ -317,7 +317,7 @@ class _WeddingPreviewScreenState extends State<WeddingPreviewScreen> {
                                 children: [
                                   Container(
                                     padding: EdgeInsets.all(12),
-                                    color: Color(0xFFFE96AF).withOpacity(0.9),
+                                    color: Color(0xFFFE96AF).withValues(alpha: 0.9),
                                     child: Row(
                                       children: [
                                         Icon(Icons.map, color: Colors.white),
@@ -337,8 +337,8 @@ class _WeddingPreviewScreenState extends State<WeddingPreviewScreen> {
                                             "${weddingData!['venue_lng']!.toStringAsFixed(4)}",
                                             style: TextStyle(
                                               fontSize: 12,
-                                              color: Colors.white.withOpacity(
-                                                0.8,
+                                              color: Colors.white.withValues(
+                                                alpha: 0.8,
                                               ),
                                             ),
                                           ),

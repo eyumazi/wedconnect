@@ -2,11 +2,10 @@ import 'dart:convert' show base64Decode;
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart' show GoogleSignIn;
-import 'package:icons_flutter/icons_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wedconnect/Authentication/Wrapper.dart';
 import 'package:wedconnect/Reusable%20components/Button3.dart';
@@ -220,8 +219,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFFFF8FAF).withOpacity(0.8),
-                  Color(0xFFC19AC7).withOpacity(0.8),
+                  Color(0xFFFF8FAF).withValues(alpha: 0.8),
+                  Color(0xFFC19AC7).withValues(alpha: 0.8),
                 ],
               ),
             ),
@@ -312,7 +311,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ),
       onTap: onTap,
       tileColor: Colors.transparent,
-      hoverColor: Colors.pink.withOpacity(0.1),
+      hoverColor: Colors.pink.withValues(alpha: 0.1),
     );
   }
 
@@ -357,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 10,
                   offset: Offset(0, 4),
                 ),
@@ -391,7 +390,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: Color(0xFFC19AC7).withOpacity(0.1),
+                  color: Color(0xFFC19AC7).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                   border: Border.all(color: Color(0xFFC19AC7), width: 2),
                 ),
@@ -423,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.cormorantGaramond(
                   fontSize: 20,
-                  color: Color(0xFFC19AC7).withOpacity(0.8),
+                  color: Color(0xFFC19AC7).withValues(alpha: 0.8),
                 ),
               ),
 
@@ -437,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFFC19AC7).withOpacity(0.1),
+                      color: Color(0xFFC19AC7).withValues(alpha: 0.1),
                       blurRadius: 20,
                       offset: Offset(0, 10),
                     ),
@@ -471,7 +470,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               SizedBox(height: 40),
 
               // Setup Button
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: CustomUploadingButton(
                   text: buttonText,
@@ -497,7 +496,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: Color(0xFFC19AC7).withOpacity(0.1),
+            color: Color(0xFFC19AC7).withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, size: 20, color: Color(0xFFC19AC7)),
@@ -578,7 +577,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.white.withOpacity(0.7),
+                          Colors.white.withValues(alpha: 0.7),
                           Colors.white,
                         ],
                       ),
@@ -606,7 +605,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               horizontal: 20,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF8E6EC).withOpacity(0.4),
+                              color: const Color(0xFFF8E6EC).withValues(alpha: 0.4),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: StreamBuilder(
@@ -764,72 +763,70 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }) {
     return GestureDetector(
       onTap: () => openGoogleMaps(lat, lng),
-      child: Container(
-        child: Column(
-          children: [
-            /// TITLE
-            Text(
-              "VENUE",
-              style: GoogleFonts.cinzelDecorative(
-                fontSize: 25,
-                fontWeight: FontWeight.w700,
-              ),
+      child: Column(
+        children: [
+          /// TITLE
+          Text(
+            "VENUE",
+            style: GoogleFonts.cinzelDecorative(
+              fontSize: 25,
+              fontWeight: FontWeight.w700,
             ),
-
-            const SizedBox(height: 12),
-
-            /// VENUE NAME
-            Text(
-              venueName,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.cormorantGaramond(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
+          ),
+      
+          const SizedBox(height: 12),
+      
+          /// VENUE NAME
+          Text(
+            venueName,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.cormorantGaramond(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
             ),
-
-            const SizedBox(height: 6),
-
-            /// ADDRESS
-            const SizedBox(height: 16),
-
-            /// MAP PREVIEW (FREE)
-            if (_mapImageBytes != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Stack(
-                  children: [
-                    Image.memory(
-                      _mapImageBytes!,
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-
-                    /// Overlay
-                    Positioned(
-                      bottom: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.65),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Text(
-                          "Open in Google Maps",
-                          style: TextStyle(color: Colors.white, fontSize: 12),
-                        ),
+          ),
+      
+          const SizedBox(height: 6),
+      
+          /// ADDRESS
+          const SizedBox(height: 16),
+      
+          /// MAP PREVIEW (FREE)
+          if (_mapImageBytes != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Stack(
+                children: [
+                  Image.memory(
+                    _mapImageBytes!,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+      
+                  /// Overlay
+                  Positioned(
+                    bottom: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.65),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Text(
+                        "Open in Google Maps",
+                        style: TextStyle(color: Colors.white, fontSize: 12),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }
@@ -863,7 +860,7 @@ class LuxuryBottomNav extends StatelessWidget {
           borderRadius: BorderRadius.circular(36),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 25,
               offset: const Offset(0, 12),
             ),
@@ -887,13 +884,13 @@ class LuxuryBottomNav extends StatelessWidget {
   Widget _placeholderIcon(int index) {
     switch (index) {
       case 0:
-        return Icon(FontAwesome.home);
+        return Icon(Icons.home);
       case 1:
-        return Icon(FontAwesome.users);
+        return Icon(Icons.people);
       case 2:
         return Icon(Icons.rate_review);
       case 3:
-        return Icon(FontAwesome.camera);
+        return Icon(Icons.camera_alt);
       case 4:
         return Icon(Icons.favorite);
       default:
@@ -935,7 +932,7 @@ class _LuxuryNavItem extends StatelessWidget {
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: Colors.pinkAccent.withOpacity(0.35),
+                        color: Colors.pinkAccent.withValues(alpha: 0.35),
                         blurRadius: 14,
                         offset: const Offset(0, 8),
                       ),
@@ -947,7 +944,7 @@ class _LuxuryNavItem extends StatelessWidget {
                 size: 22,
                 color: isSelected
                     ? Colors.white
-                    : Colors.pinkAccent.withOpacity(0.8),
+                    : Colors.pinkAccent.withValues(alpha: 0.8),
               ),
               child: icon,
             ),

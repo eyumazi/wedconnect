@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -61,7 +61,7 @@ class _GuestScreenState extends State<GuestScreen> {
       builder: (context) {
         return AlertDialog(
           title: Text('Select Guest for QR Code'),
-          content: Container(
+          content: SizedBox(
             width: double.maxFinite,
             height: 300,
             child: ListView.builder(
@@ -536,7 +536,7 @@ class _GuestScreenState extends State<GuestScreen> {
             children: [
               CircleAvatar(
                 radius: 28,
-                backgroundColor: const Color(0xFF7158E2).withOpacity(0.5),
+                backgroundColor: const Color(0xFF7158E2).withValues(alpha: 0.5),
                 backgroundImage: guestPhoto != null
                     ? MemoryImage(guestPhoto!)
                     : (currentPhotoUrl != null
@@ -774,7 +774,7 @@ class _GuestScreenState extends State<GuestScreen> {
                     backgroundColor: Colors.black, // luxury black
                     foregroundColor: Colors.white, // text color
                     elevation: 6,
-                    shadowColor: Colors.black.withOpacity(0.5),
+                    shadowColor: Colors.black.withValues(alpha: 0.5),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 28,
                       vertical: 14,

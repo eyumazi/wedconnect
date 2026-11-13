@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -16,10 +16,10 @@ class QRCodeGeneratorScreen extends StatefulWidget {
   final String guestName;
 
   const QRCodeGeneratorScreen({
-    Key? key,
+    super.key,
     required this.guestId,
     required this.guestName,
-  }) : super(key: key);
+  });
 
   @override
   State<QRCodeGeneratorScreen> createState() => _QRCodeGeneratorScreenState();

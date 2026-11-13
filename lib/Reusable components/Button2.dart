@@ -1,12 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CustomElevatedButton2 extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
 
-  const CustomElevatedButton2({Key? key, required this.text, this.onPressed})
-    : super(key: key);
+  const CustomElevatedButton2({super.key, required this.text, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,7 @@ class CustomElevatedButton2 extends StatelessWidget {
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         ),
         shadowColor: WidgetStateProperty.all(
-          const Color(0xFF5AA0D6).withOpacity(0.45),
+          const Color(0xFF5AA0D6).withValues(alpha: 0.45),
         ),
         elevation: WidgetStateProperty.all(12),
       ),

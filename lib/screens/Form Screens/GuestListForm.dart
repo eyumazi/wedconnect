@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -275,7 +275,7 @@ class _GuestlistformState extends State<Guestlistform> {
                               radius: 28,
                               backgroundColor: const Color(
                                 0xFF7158E2,
-                              ).withOpacity(0.5),
+                              ).withValues(alpha: 0.5),
                               backgroundImage: guestPhoto != null
                                   ? MemoryImage(guestPhoto!)
                                   : null,

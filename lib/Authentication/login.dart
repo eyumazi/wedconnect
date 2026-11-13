@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -172,7 +172,7 @@ class _LoginState extends State<Login> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0xFFC19AC7).withOpacity(0.3),
+                              color: Color(0xFFC19AC7).withValues(alpha: 0.3),
                               blurRadius: 18,
                               spreadRadius: 8,
                             ),
@@ -195,7 +195,7 @@ class _LoginState extends State<Login> {
                         'Your Luxury Wedding Experience',
                         style: GoogleFonts.cormorantGaramond(
                           fontSize: 18,
-                          color: Color(0xFFC19AC7).withOpacity(1),
+                          color: Color(0xFFC19AC7).withValues(alpha: 1),
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -225,7 +225,7 @@ class _LoginState extends State<Login> {
                       'Sign in to continue your journey',
                       style: GoogleFonts.cormorantGaramond(
                         fontSize: 16,
-                        color: Color(0xFFC19AC7).withOpacity(1),
+                        color: Color(0xFFC19AC7).withValues(alpha: 1),
                       ),
                     ),
                   ),
@@ -269,7 +269,7 @@ class _LoginState extends State<Login> {
                         _obscurePassword
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: Color(0xFFC19AC7).withOpacity(0.5),
+                        color: Color(0xFFC19AC7).withValues(alpha: 0.5),
                       ),
                     ),
                     validator: (value) {
@@ -318,7 +318,7 @@ class _LoginState extends State<Login> {
                       borderRadius: BorderRadius.circular(28),
                       boxShadow: [
                         BoxShadow(
-                          color: Color(0xFFC19AC7).withOpacity(0.4),
+                          color: Color(0xFFC19AC7).withValues(alpha: 0.4),
                           blurRadius: 15,
                           spreadRadius: 1,
                         ),
@@ -375,7 +375,7 @@ class _LoginState extends State<Login> {
                     children: [
                       Expanded(
                         child: Divider(
-                          color: Color(0xFFC19AC7).withOpacity(0.3),
+                          color: Color(0xFFC19AC7).withValues(alpha: 0.3),
                           thickness: 1,
                         ),
                       ),
@@ -385,13 +385,13 @@ class _LoginState extends State<Login> {
                           'New to WedConnect?',
                           style: GoogleFonts.cormorantGaramond(
                             fontSize: 14,
-                            color: Color(0xFFC19AC7).withOpacity(1),
+                            color: Color(0xFFC19AC7).withValues(alpha: 1),
                           ),
                         ),
                       ),
                       Expanded(
                         child: Divider(
-                          color: Color(0xFFC19AC7).withOpacity(0.6),
+                          color: Color(0xFFC19AC7).withValues(alpha: 0.6),
                           thickness: 1,
                         ),
                       ),
@@ -408,7 +408,7 @@ class _LoginState extends State<Login> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(28),
                       border: Border.all(
-                        color: Color(0xFFC19AC7).withOpacity(0.3),
+                        color: Color(0xFFC19AC7).withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                     ),
@@ -442,7 +442,7 @@ class _LoginState extends State<Login> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(28),
                       border: Border.all(
-                        color: Color(0xFFC19AC7).withOpacity(0.3),
+                        color: Color(0xFFC19AC7).withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                     ),
@@ -474,7 +474,7 @@ class _LoginState extends State<Login> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.cormorantGaramond(
                       fontSize: 16,
-                      color: Color(0xFFC19AC7).withOpacity(1),
+                      color: Color(0xFFC19AC7).withValues(alpha: 1),
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.w700,
                     ),
@@ -518,7 +518,7 @@ class _LoginState extends State<Login> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Color(0xFFC19AC7).withOpacity(0.1),
+                color: Color(0xFFC19AC7).withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: Offset(0, 4),
               ),
@@ -536,11 +536,11 @@ class _LoginState extends State<Login> {
               hintText: hintText,
               hintStyle: GoogleFonts.cormorantGaramond(
                 fontSize: 16,
-                color: Color(0xFFC19AC7).withOpacity(0.4),
+                color: Color(0xFFC19AC7).withValues(alpha: 0.4),
               ),
               prefixIcon: Icon(
                 prefixIcon,
-                color: Color(0xFFC19AC7).withOpacity(0.5),
+                color: Color(0xFFC19AC7).withValues(alpha: 0.5),
               ),
               suffixIcon: suffixIcon,
               border: OutlineInputBorder(

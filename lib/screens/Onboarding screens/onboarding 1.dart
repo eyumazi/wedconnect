@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wedconnect/Reusable%20components/Button.dart';
 import 'package:wedconnect/screens/Onboarding%20screens/OnboardingPage.dart';

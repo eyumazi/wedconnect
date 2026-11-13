@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wedconnect/Reusable%20components/Button.dart';
@@ -60,35 +60,33 @@ class Onboardingcard extends StatelessWidget {
                   ),
                 ],
               ),
-              Container(
-                child: Column(
-                  children: [
-                    Button,
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: TextButton(
-                        onPressed: () {
-                          // Using GetX instead of Navigator
-                          Get.off(
-                            () => Onboardingcard2(
-                              image: "assets/images/logo.png",
-                              title: "Your Wedding, Your Style",
-                              description:
-                                  "Create your account and customize\n your wedding space to make the\n app truly yours.",
-                              Button: CustomElevatedButton(
-                                text: "Get Started",
-                                onPressed: () {
-                                  Get.offAll(() => Login());
-                                },
-                              ),
+              Column(
+                children: [
+                  Button,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: TextButton(
+                      onPressed: () {
+                        // Using GetX instead of Navigator
+                        Get.off(
+                          () => Onboardingcard2(
+                            image: "assets/images/logo.png",
+                            title: "Your Wedding, Your Style",
+                            description:
+                                "Create your account and customize\n your wedding space to make the\n app truly yours.",
+                            Button: CustomElevatedButton(
+                              text: "Get Started",
+                              onPressed: () {
+                                Get.offAll(() => Login());
+                              },
                             ),
-                          );
-                        },
-                        child: Text("Skip"),
-                      ),
+                          ),
+                        );
+                      },
+                      child: Text("Skip"),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),

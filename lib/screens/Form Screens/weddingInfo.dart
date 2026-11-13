@@ -2,7 +2,7 @@ import 'dart:convert' show base64Encode;
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wedconnect/Reusable components/Button2.dart';
@@ -145,8 +145,9 @@ class _WeddingInfoState extends State<WeddingInfo> {
                               firstDate: DateTime(2024),
                               lastDate: DateTime(2100),
                             );
-                            if (picked != null)
+                            if (picked != null) {
                               setState(() => weddingDate = picked);
+                            }
                           },
                     child: _infoBox(
                       weddingDate == null
@@ -184,7 +185,7 @@ class _WeddingInfoState extends State<WeddingInfo> {
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -233,11 +234,11 @@ class _WeddingInfoState extends State<WeddingInfo> {
                       padding: const EdgeInsets.only(top: 20),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -249,7 +250,7 @@ class _WeddingInfoState extends State<WeddingInfo> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(12),
-                                color: Color(0xFFFE96AF).withOpacity(0.8),
+                                color: Color(0xFFFE96AF).withValues(alpha: 0.8),
                                 child: Row(
                                   children: [
                                     Icon(Icons.map, color: Colors.white),
@@ -307,7 +308,7 @@ class _WeddingInfoState extends State<WeddingInfo> {
             // Loading overlay
             if (_isUploading)
               Container(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -388,7 +389,7 @@ class _WeddingInfoState extends State<WeddingInfo> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.7),
+          color: Colors.white.withValues(alpha: 0.7),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
@@ -414,7 +415,7 @@ class _WeddingInfoState extends State<WeddingInfo> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.7),
+          color: Colors.white.withValues(alpha: 0.7),
           borderRadius: BorderRadius.circular(14),
         ),
         child: TextField(

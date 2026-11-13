@@ -8,10 +8,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 pickImage(ImageSource source) async {
-  final ImagePicker _imgepicker = ImagePicker();
-  XFile? _file = await _imgepicker.pickImage(source: source);
-  if (_file != null) {
-    return await _file.readAsBytes();
+  final ImagePicker imgepicker = ImagePicker();
+  XFile? file = await imgepicker.pickImage(source: source);
+  if (file != null) {
+    return await file.readAsBytes();
   }
   return null;
 }

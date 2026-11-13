@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,20 +9,48 @@ import 'package:wedconnect/Authentication/Wrapper.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
 
-  await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
-  );
+  Object? startupError;
+  try {
+    await dotenv.load(fileName: ".env");
 
-  await Firebase.initializeApp();
+    final supabaseUrl = dotenv.env['SUPABASE_URL'];
+    final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
+    if (supabaseUrl == null || supabaseAnonKey == null) {
+      throw StateError(
+        'SUPABASE_URL and SUPABASE_ANON_KEY must be defined in .env.',
+      );
+    }
 
-  runApp(const MyApp());
+    await Supabase.initialize(
+      url: supabaseUrl,
+      anonKey: supabaseAnonKey,
+    );
+    await Firebase.initializeApp(
+      options: kIsWeb
+          ? const FirebaseOptions(
+              apiKey: 'AIzaSyCo3QE6RoUHwFW9hNVQ8jW5ktx95WD3Tbo',
+              appId: '1:69195515876:android:38ccf0c38f069d171329f1',
+              messagingSenderId: '69195515876',
+              projectId: 'wedconnect-auth',
+              authDomain: 'wedconnect-auth.firebaseapp.com',
+              storageBucket: 'wedconnect-auth.firebasestorage.app',
+            )
+          : null,
+    );
+  } on Object catch (error, stackTrace) {
+    startupError = error;
+    debugPrint('Application startup failed: $error');
+    debugPrintStack(stackTrace: stackTrace);
+  }
+
+  runApp(MyApp(startupError: startupError));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Object? startupError;
+
+  const MyApp({super.key, this.startupError});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +92,43 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: Wrapper(),
+      home: startupError == null
+          ? const Wrapper()
+          : StartupErrorScreen(error: startupError!),
+    );
+  }
+}
+
+class StartupErrorScreen extends StatelessWidget {
+  final Object error;
+
+  const StartupErrorScreen({super.key, required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 56, color: Colors.red),
+              const SizedBox(height: 16),
+              const Text(
+                'WedConnect could not start',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                error.toString(),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

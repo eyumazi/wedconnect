@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -130,8 +130,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 30),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(
-                          0.5,
+                        color: Colors.white.withValues(
+                          alpha: 0.5,
                         ), // Reduced opacity here directly
                         borderRadius: BorderRadius.circular(50),
                       ),
@@ -257,7 +257,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             // Loading overlay
             if (_isUploading)
               Container(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

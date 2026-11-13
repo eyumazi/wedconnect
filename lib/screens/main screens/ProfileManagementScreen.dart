@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -435,7 +435,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
                   ),
                 if (_isUploadingCover)
                   Container(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     child: Center(
                       child: CircularProgressIndicator(color: Colors.white),
                     ),
@@ -487,7 +487,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
                                 radius: 70,
                                 backgroundColor: Color(
                                   0xFFC19AC7,
-                                ).withOpacity(0.1),
+                                ).withValues(alpha: 0.1),
                                 backgroundImage: _profileImageBytes != null
                                     ? MemoryImage(_profileImageBytes!)
                                           as ImageProvider
@@ -509,7 +509,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
                               if (_isUploadingImage)
                                 Positioned.fill(
                                   child: Container(
-                                    color: Colors.black.withOpacity(0.5),
+                                    color: Colors.black.withValues(alpha: 0.5),
                                     child: Center(
                                       child: CircularProgressIndicator(
                                         valueColor:
@@ -548,7 +548,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
                   ),
                   SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    value: _roleController.text.isNotEmpty
+                    initialValue: _roleController.text.isNotEmpty
                         ? _roleController.text
                         : null,
                     items: ['groom', 'bride']
@@ -710,7 +710,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: TextField(
@@ -738,7 +738,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -772,11 +772,11 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
                       padding: const EdgeInsets.only(top: 20),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -788,7 +788,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(12),
-                                color: Color(0xFFFE96AF).withOpacity(0.8),
+                                color: Color(0xFFFE96AF).withValues(alpha: 0.8),
                                 child: Row(
                                   children: [
                                     Icon(Icons.map, color: Colors.white),
@@ -835,7 +835,7 @@ class _ProfileManagementScreenState extends State<ProfileManagementScreen> {
                   SizedBox(height: 40),
 
                   // Save Button
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _saveProfile,

@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:wedconnect/Authentication/login.dart';
 
 class Splashscreen2 extends StatefulWidget {
-  const Splashscreen2({Key? key}) : super(key: key);
+  const Splashscreen2({super.key});
 
   @override
   State<Splashscreen2> createState() => _Splashscreen();

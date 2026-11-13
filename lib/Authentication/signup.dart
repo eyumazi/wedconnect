@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wedconnect/Authentication/Wrapper.dart';
 
 class Signup extends StatefulWidget {
-  const Signup({super.key});
+  const   Signup({super.key});
 
   @override
   State<Signup> createState() => _SignupState();
@@ -42,7 +42,7 @@ class _SignupState extends State<Signup> {
         'Welcome to WedConnect!',
         'Your account has been created successfully',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Color(0xFFC19AC7).withOpacity(0.9),
+        backgroundColor: Color(0xFFC19AC7).withValues(alpha: 0.9),
         colorText: Colors.white,
         duration: Duration(seconds: 3),
       );
@@ -118,7 +118,7 @@ class _SignupState extends State<Signup> {
         'Welcome!',
         'Successfully signed in with Google',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Color(0xFFC19AC7).withOpacity(0.9),
+        backgroundColor: Color(0xFFC19AC7).withValues(alpha: 0.9),
         colorText: Colors.white,
         duration: Duration(seconds: 2),
       );
@@ -177,7 +177,7 @@ class _SignupState extends State<Signup> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0xFFC19AC7).withOpacity(0.4),
+                              color: Color(0xFFC19AC7).withValues(alpha: 0.4),
                               blurRadius: 18,
                               spreadRadius: 8,
                             ),
@@ -203,7 +203,7 @@ class _SignupState extends State<Signup> {
                         'Begin your wedding journey with us',
                         style: GoogleFonts.cormorantGaramond(
                           fontSize: 18,
-                          color: Color(0xFFC19AC7).withOpacity(1),
+                          color: Color(0xFFC19AC7).withValues(alpha: 1),
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -249,15 +249,15 @@ class _SignupState extends State<Signup> {
                         _obscurePassword
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: Color(0xFFC19AC7).withOpacity(0.5),
+                        color: Color(0xFFC19AC7).withValues(alpha: 0.5),
                       ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please create a password';
                       }
-                      if (value.length < 8) {
-                        return 'Password must be at least 8 characters';
+                      if (value.length < 12) {
+                        return 'Password must be at least 12 characters';
                       }
                       return null;
                     },
@@ -282,7 +282,7 @@ class _SignupState extends State<Signup> {
                         _obscureConfirmPassword
                             ? Icons.visibility_off
                             : Icons.visibility,
-                        color: Color(0xFFC19AC7).withOpacity(0.5),
+                        color: Color(0xFFC19AC7).withValues(alpha: 0.5),
                       ),
                     ),
                     validator: (value) {
@@ -307,7 +307,7 @@ class _SignupState extends State<Signup> {
                           text: TextSpan(
                             style: GoogleFonts.cormorantGaramond(
                               fontSize: 14,
-                              color: Color(0xFFC19AC7).withOpacity(0.7),
+                              color: Color(0xFFC19AC7).withValues(alpha: 0.7),
                             ),
                           ),
                         ),
@@ -330,7 +330,7 @@ class _SignupState extends State<Signup> {
                       borderRadius: BorderRadius.circular(28),
                       boxShadow: [
                         BoxShadow(
-                          color: Color(0xFFC19AC7).withOpacity(0.4),
+                          color: Color(0xFFC19AC7).withValues(alpha: 0.4),
                           blurRadius: 15,
                           spreadRadius: 1,
                         ),
@@ -387,7 +387,7 @@ class _SignupState extends State<Signup> {
                     children: [
                       Expanded(
                         child: Divider(
-                          color: Color(0xFFC19AC7).withOpacity(0.9),
+                          color: Color(0xFFC19AC7).withValues(alpha: 0.9),
                           thickness: 1,
                         ),
                       ),
@@ -397,13 +397,13 @@ class _SignupState extends State<Signup> {
                           'Or continue with',
                           style: GoogleFonts.cormorantGaramond(
                             fontSize: 14,
-                            color: Color(0xFFC19AC7).withOpacity(0.9),
+                            color: Color(0xFFC19AC7).withValues(alpha: 0.9),
                           ),
                         ),
                       ),
                       Expanded(
                         child: Divider(
-                          color: Color(0xFFC19AC7).withOpacity(0.3),
+                          color: Color(0xFFC19AC7).withValues(alpha: 0.3),
                           thickness: 1,
                         ),
                       ),
@@ -420,12 +420,12 @@ class _SignupState extends State<Signup> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(28),
                       border: Border.all(
-                        color: Color(0xFFC19AC7).withOpacity(0.3),
+                        color: Color(0xFFC19AC7).withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Color(0xFFC19AC7).withOpacity(0.1),
+                          color: Color(0xFFC19AC7).withValues(alpha: 0.1),
                           blurRadius: 10,
                           offset: Offset(0, 4),
                         ),
@@ -472,7 +472,7 @@ class _SignupState extends State<Signup> {
                         'Already have an account? ',
                         style: GoogleFonts.cormorantGaramond(
                           fontSize: 16,
-                          color: Color(0xFFC19AC7).withOpacity(0.7),
+                          color: Color(0xFFC19AC7).withValues(alpha: 0.7),
                         ),
                       ),
                       GestureDetector(
@@ -496,10 +496,10 @@ class _SignupState extends State<Signup> {
                   Container(
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Color(0xFFC19AC7).withOpacity(0.2),
+                        color: Color(0xFFC19AC7).withValues(alpha: 0.2),
                         width: 1,
                       ),
                     ),
@@ -509,7 +509,7 @@ class _SignupState extends State<Signup> {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.cormorantGaramond(
                         fontSize: 16,
-                        color: Color(0xFFC19AC7).withOpacity(1),
+                        color: Color(0xFFC19AC7).withValues(alpha: 1),
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -553,7 +553,7 @@ class _SignupState extends State<Signup> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Color(0xFFC19AC7).withOpacity(0.1),
+                color: Color(0xFFC19AC7).withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: Offset(0, 4),
               ),
@@ -571,11 +571,11 @@ class _SignupState extends State<Signup> {
               hintText: hintText,
               hintStyle: GoogleFonts.cormorantGaramond(
                 fontSize: 16,
-                color: Color(0xFFC19AC7).withOpacity(0.4),
+                color: Color(0xFFC19AC7).withValues(alpha: 0.4),
               ),
               prefixIcon: Icon(
                 prefixIcon,
-                color: Color(0xFFC19AC7).withOpacity(0.5),
+                color: Color(0xFFC19AC7).withValues(alpha: 0.5),
               ),
               suffixIcon: suffixIcon,
               border: OutlineInputBorder(
