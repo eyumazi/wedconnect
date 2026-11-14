@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum UserStatus {
@@ -139,6 +140,7 @@ model Wedding {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   guests    Guest[]
   memories  Memory[]
+  signBoardWishes SignBoardWish[]
 
   @@index([userId])
 }
@@ -155,6 +157,15 @@ model Guest {
 }
 
 model Memory {
+  id        String   @id @default(uuid()) @db.Uuid
+  weddingId String   @db.Uuid
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  wedding   Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+}
+
+model SignBoardWish {
   id        String   @id @default(uuid()) @db.Uuid
   weddingId String   @db.Uuid
   data      Json

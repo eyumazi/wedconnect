@@ -6,7 +6,7 @@ This is the NestJS replacement backend for the Flutter application.
 
 - NestJS and TypeScript
 - Neon-hosted PostgreSQL through Prisma 6
-- Cloudflare R2 for object storage (R2 credentials are server-only)
+- Backblaze B2 S3-compatible object storage (B2 credentials are server-only)
 - Argon2id password hashing
 - Short-lived JWT access tokens and one-time rotated refresh tokens
 
@@ -19,6 +19,29 @@ This is the NestJS replacement backend for the Flutter application.
 5. Start the API with `npm run start:dev`.
 
 The API is served under `/api`. Never put `DATABASE_URL`, JWT secrets, or R2 secret keys in the Flutter app.
+
+## Migration variables
+
+- `SUPABASE_DB_URL`: Supabase Dashboard > **Connect** > direct Postgres URI. This is
+  only used as the source by `scripts/migrate-db.sh`.
+- `DATABASE_URL`: Neon Dashboard > **Connect** > pooled connection string.
+- `DIRECT_URL`: Neon Dashboard > **Connect** > direct connection string.
+- `SUPABASE_PROJECT_REF`: the project reference in the Supabase project URL.
+- `SUPABASE_S3_ENDPOINT`, `SUPABASE_S3_ACCESS_KEY`, and
+  `SUPABASE_S3_SECRET_KEY`: Supabase Dashboard > **Storage** > S3 connection
+  details. These are source credentials and must never be committed.
+- `B2_ENDPOINT` and `B2_REGION`: Backblaze B2 bucket details. The endpoint looks
+  like `https://s3.<region>.backblazeb2.com`.
+- `B2_ACCESS_KEY_ID` and `B2_SECRET_ACCESS_KEY`: a Backblaze application key
+  restricted to the target bucket with read/write permissions. Do not use the
+  master application key.
+- `B2_BUCKET_NAME`: the target bucket created in Backblaze B2.
+- `B2_PUBLIC_URL`: a B2 public/custom-domain URL without a trailing slash, or
+  leave it empty when all downloads are private and presigned.
+
+Run `bash scripts/migrate-db.sh` only after reviewing its dump and confirming a
+Neon backup. Run `npm run migrate:storage` only after the database import and
+B2 bucket are ready. Neither command creates sample data.
 
 ## Security boundary
 
