@@ -39,9 +39,12 @@ The API is served under `/api`. Never put `DATABASE_URL`, JWT secrets, or R2 sec
 - `B2_PUBLIC_URL`: a B2 public/custom-domain URL without a trailing slash, or
   leave it empty when all downloads are private and presigned.
 
-Run `bash scripts/migrate-db.sh` only after reviewing its dump and confirming a
-Neon backup. Run `npm run migrate:storage` only after the database import and
-B2 bucket are ready. Neither command creates sample data.
+On Windows, `migrate-db.sh` must be run from Git Bash/WSL with PostgreSQL
+client tools installed and available on `PATH` (`pg_dump`, `psql`, and `perl`).
+The script fails before touching either database if a tool is missing. Run it
+only after reviewing its dump and confirming a Neon backup. Run
+`npm run migrate:storage` only after the database import and B2 bucket are
+ready. Neither command creates sample data.
 
 ## Security boundary
 

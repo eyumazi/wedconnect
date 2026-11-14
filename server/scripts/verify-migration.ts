@@ -20,6 +20,7 @@ const targetDb = new PrismaClient({
 const sourceStorage = new S3Client({
   endpoint: required('SUPABASE_S3_ENDPOINT'),
   region: 'us-east-1',
+  forcePathStyle: true,
   credentials: {
     accessKeyId: required('SUPABASE_S3_ACCESS_KEY'),
     secretAccessKey: required('SUPABASE_S3_SECRET_KEY'),
@@ -87,10 +88,9 @@ async function main(): Promise<void> {
     tableCounts(sourceDb),
     tableCounts(targetDb),
   ]);
-  const tableNames = new Set([...sourceTables.keys(), ...targetTables.keys()]);
   let tablesMatch = true;
   console.log('TABLE_COUNTS');
-  for (const table of [...tableNames].sort()) {
+  for (const table of [...sourceTables.keys()].sort()) {
     const source = sourceTables.get(table) ?? 0n;
     const target = targetTables.get(table) ?? 0n;
     const match = source === target;

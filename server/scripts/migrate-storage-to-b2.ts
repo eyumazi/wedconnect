@@ -16,6 +16,8 @@ const required = (name: string): string => {
 const source = new S3Client({
   endpoint: required('SUPABASE_S3_ENDPOINT'),
   region: 'us-east-1',
+  forcePathStyle: true,
+  requestHandler: { requestTimeout: 60_000 },
   credentials: {
     accessKeyId: required('SUPABASE_S3_ACCESS_KEY'),
     secretAccessKey: required('SUPABASE_S3_SECRET_KEY'),
@@ -24,6 +26,7 @@ const source = new S3Client({
 const target = new S3Client({
   endpoint: required('B2_ENDPOINT'),
   region: required('B2_REGION'),
+  requestHandler: { requestTimeout: 60_000 },
   credentials: {
     accessKeyId: required('B2_ACCESS_KEY_ID'),
     secretAccessKey: required('B2_SECRET_ACCESS_KEY'),
@@ -35,7 +38,7 @@ const buckets = required('SUPABASE_STORAGE_BUCKETS')
   .map((bucket) => bucket.trim())
   .filter(Boolean);
 const targetBucket = required('B2_BUCKET_NAME');
-const publicUrl = required('B2_PUBLIC_URL').replace(/\/$/, '');
+const publicUrl = (process.env.B2_PUBLIC_URL ?? '').replace(/\/$/, '');
 const projectRef = required('SUPABASE_PROJECT_REF');
 
 const prisma = new PrismaClient({
@@ -66,6 +69,7 @@ async function copyBucket(bucket: string): Promise<void> {
           ContentType: downloaded.ContentType ?? 'application/octet-stream',
         }),
       );
+      console.log(`Copied ${bucket}/${object.Key}`);
     }
     continuationToken = listed.IsTruncated
       ? listed.NextContinuationToken
@@ -74,6 +78,10 @@ async function copyBucket(bucket: string): Promise<void> {
 }
 
 async function rewritePublicUrls(): Promise<void> {
+  if (!publicUrl) {
+    console.warn('B2_PUBLIC_URL is empty; copied objects will keep their source URLs');
+    return;
+  }
   const columns = await prisma.$queryRaw<
     Array<{ table_name: string; column_name: string }>
   >`SELECT table_name, column_name
